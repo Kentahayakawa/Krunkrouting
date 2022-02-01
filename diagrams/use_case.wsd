@@ -1,0 +1,73 @@
+@startuml
+' Actors & their relationships
+:Leader: as leader
+:member: as member
+member <|--up-- leader
+
+
+'Epic: Group Formation
+rectangle GroupFormation {
+  'Actor-triggered use cases
+  leader -right-> (Form a Group)
+
+  'Include behavior
+  (Form a Group) .> (Add members)
+}
+
+
+'Epic: Search
+rectangle Search {
+  'Actor-triggered use cases
+  leader -up-> (Search for bars)
+
+  'Extend behavior
+  (Filter) .> (Search for bars)
+
+  'Include behavior
+  (Search for bars) ..> (Add to Event Schedule)
+}
+
+
+'Epic: Event Editing
+rectangle EventEditing {
+  'Actor-triggered use cases
+  member -left-> (Edit Event Schedule)  
+  
+  'Include behavior
+  (Edit Event Schedule) ...> (Vote to move on)
+  (Edit Event Schedule) .left.> (Vote to go home)
+  (Edit Event Schedule) .> (Vote to Add/Remove Bars)
+  (Edit Event Schedule) -down-> (Generate Notification)
+
+  'Extend behavior
+  (Create poll) .down.> (Edit Event Schedule)
+  (View Event Schedule) .up.> (Edit Event Schedule)
+}
+
+'Epic: Transportation
+rectangle Transportation {
+  'Actor-triggered use cases
+  (member) --down--> (Go to next location)
+  
+  'Generalizations
+  (Go to next location) <|-right- (Order transportation)
+  (Go to next location) <|-down- (Walk)
+  (Go to next location) <|-down- (Public transit)
+  
+  'Extend behavior
+  (Read departure notifications) .right.> (Go to next location)
+  (View transportation routes) .down.> (Go to next location)
+
+  'Extend behavior (from EventEditing epic)
+  (View Event Schedule) .down.> (View transportation routes)
+  (Generate Notification) .> (Read departure notifications)
+}
+
+
+'Epic: Feedback
+rectangle Feedback {
+  'Actor-triggered use cases
+  member -right-> (Leave feedback on bars)
+}
+
+@enduml
