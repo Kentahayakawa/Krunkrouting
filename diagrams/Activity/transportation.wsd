@@ -1,0 +1,39 @@
+@startuml
+
+|member|
+start
+
+repeat
+if (Call a vote) is (<color:green> Go to next bar) then
+:Set Next-Location to 
+the next bar in the 
+event schedule;
+
+else(<color:red> Go home)
+:Set Next-Location 
+to Home;
+
+endif
+
+|member|
+
+|App|
+:Get route to Next-Location;
+:Generate Departure Notification;
+if (route walkable?) is (<color:green>yes) then 
+:Show directions to next bar;
+(<color:red> no     ) elseif (uber enabled?) then (<color:green>yes)
+:Order uber;
+else (<color:red> no)
+:Show route to public transit;
+endif
+|App|
+
+|member|
+:Move to next location;
+repeat while (Home?) is (<color:red> no)
+-><color:green>yes;
+|member|
+
+stop
+@enduml
