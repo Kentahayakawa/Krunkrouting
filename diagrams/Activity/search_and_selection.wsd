@@ -1,0 +1,60 @@
+@startuml
+
+|Member|
+|Member|
+
+|Leader|
+start
+:Select starting location;
+:Select search radius;
+repeat
+:Apply filters;
+|Leader|
+
+|App|
+:Format Google Places API call;
+|App|
+
+|Google Places|
+:Return places;
+|Google Places|
+
+|App|
+:Cluster places into "Bar-Blocks";
+|App|
+
+|Leader|
+repeat while (<b> Not happy with Bar-Blocks)
+:Select Bar-Blocks;
+|Leader|
+
+|Member|
+repeat
+:Vote on which bars to select within Bar-Blocks;
+|Member|
+
+|App|
+:Remove Bar-Blocks that don't
+have any selected bars;
+:Choose location to identify each bar block;
+:Group locations (Home, Bar-Blocks) into closest-pairs;
+:Format Google Maps/Routes API call(s):
+  * Home to first bar block
+  * Between intermediate Bar-Blocks
+  * Last bar block to Home;
+|App|
+
+|Google Maps/Routes|
+:Calculate routes;
+|Google Maps/Routes|
+
+|App|
+:Save routes to event schedule;
+|App|
+
+|Member|
+repeatwhile (Vote to Add/Remove Bars)
+|Member|
+
+stop
+@enduml
