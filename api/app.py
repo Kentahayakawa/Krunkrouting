@@ -15,7 +15,7 @@ from flask_login import (
 from oauthlib.oauth2 import WebApplicationClient
 import requests
 
-from db import init_db_command
+from db import init_db_command, get_db
 from user import User
 
 # TODO: In a real project we would want to use environment variables. But since this is a
@@ -139,6 +139,19 @@ def callback():
 def logout():
     logout_user()
     return redirect(url_for("index"))
+
+'''
+#coded by Kenta, revision may be needed
+#main group schedule page
+@app.route("/schedule")
+@login_required
+def schedule():
+    events = get_db()
+    events.execute(
+        'SELECT * FROM event (id, name, time)'
+    )
+    return render_template('schedule.html', events=events) #html page not built yet
+'''
 
 if __name__ == "__main__":
     app.run(ssl_context="adhoc")
