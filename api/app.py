@@ -140,8 +140,7 @@ def logout():
     logout_user()
     return redirect(url_for("index"))
 
-'''
-#coded by Kenta, revision may be needed
+#coded by Kenta, revision needed
 #main group schedule page
 @app.route("/schedule")
 @login_required
@@ -150,8 +149,39 @@ def schedule():
     events.execute(
         'SELECT * FROM event (id, name, time)'
     )
-    return render_template('schedule.html', events=events) #html page not built yet
-'''
+    events.commit()
+    return render_template('schedule.html', events=events) #don't know how to link this to js
+
+#add new schedule
+@app.route("/schedule/new", methods=['GET', 'POST'])
+@login_required
+def add_schedule():
+    form = ScheduleForm()    #TODO: create form for schedule
+    if form.validate_on_submit():  
+        event = Event(name=form.name.data, time=form.time.data)
+        db = get_db()
+        db.execute(
+            'INSERT INTO event (id, name, time) VALUES (?, ?, ?)',
+            (id, name, time)
+        )
+        db.commit()
+        flash('New event added!', 'success')
+        return redirect(url_for('schedule'))
+
+#delete a schedule
+@app.route("/schedule/<int:schedule_id>/delete", methods=['POST'])
+@login_required
+def delete_schedule(schedule_id):
+    event = get_db()
+    event.execute(
+        'DELETE FROM event (id, name, time) WHERE id = (?)',
+        (schedule_id)
+    )
+    event.commit()
+    flash('Event deleted!', 'success')
+    return redirect(url_for('schedule'))
+
+
 
 if __name__ == "__main__":
     app.run(ssl_context="adhoc")

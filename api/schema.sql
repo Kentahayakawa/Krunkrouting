@@ -5,7 +5,7 @@ CREATE TABLE user (
     profile_pic TEXT NOT NULL
 );
 
-CREATE TABLE event )
+CREATE TABLE event (
     id TEXT PRIMARY KEY,
     name TEXT NOT NULL,
     timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
