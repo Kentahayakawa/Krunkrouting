@@ -6,6 +6,7 @@ class Event():
         self.name = name
         self.time = time
 
+    
     @staticmethod
     def get(event_id):
         db = get_db()
@@ -26,7 +27,18 @@ class Event():
     def create(id, name, time):
         db = get_db()
         db.execute(
-            'INSERT INTO event (id, name, time) VALUES (?, ?, ?, ?)',
+            'INSERT INTO event (id, name, time) VALUES (?, ?, ?)',
             (id, name, time)
         )
         db.commit()
+
+
+    @staticmethod
+    def get_all():
+        db = get_db()
+        events = db.execute(
+            'SELECT * FROM event'
+        ).fetchall()
+        if not events:
+            return None        
+        return events

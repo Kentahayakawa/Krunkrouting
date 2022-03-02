@@ -17,6 +17,7 @@ import requests
 
 from db import init_db_command, get_db
 from user import User
+from event import Event
 
 # TODO: In a real project we would want to use environment variables. But since this is a
 # private repository, it is okay to keep it here.
@@ -53,6 +54,7 @@ def index():
             '<p>Hello, {}! You\'re logged in! Email: {}</p>'
             '<div><p>Google Profile Picture:</p>'
             '<img src="{}" alt="Google profile pic"></img></div>'
+            '<a class="button" href="/schedule">View Schedule</a><br>'
             '<a class="button" href="/logout">Logout</a>'.format(
                 current_user.name, current_user.email, current_user.profile_pic
             )
@@ -143,14 +145,13 @@ def logout():
 #coded by Kenta, revision needed
 #main group schedule page
 @app.route("/schedule")
-@login_required
+#@login_required
 def schedule():
-    events = get_db()
-    events.execute(
-        'SELECT * FROM event (id, name, time)'
-    )
-    events.commit()
-    return render_template('schedule.html', events=events) #don't know how to link this to js
+    events = Event.get_all()
+    if events is None:
+        return '<h1>Nothing to see here yet...</h1>'
+    else:
+        return '<h1>This page should list all schedules</h1>' #render_template('schedule.html', events=events) 
 
 #add new schedule
 @app.route("/schedule/new", methods=['GET', 'POST'])
