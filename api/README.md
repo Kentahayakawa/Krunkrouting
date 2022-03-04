@@ -1,1 +1,0 @@
-Run `pip install -r requirements.txt` to install the requirements for this project. The skeleton for this project is based off a [realpython.com tutorial](https://realpython.com/flask-google-login/).
