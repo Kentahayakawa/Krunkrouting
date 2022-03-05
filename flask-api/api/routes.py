@@ -208,8 +208,8 @@ class LogoutUser(Resource):
         jwt_block = JWTTokenBlocklist(jwt_token=_jwt_token, created_at=datetime.now(timezone.utc))
         jwt_block.save()
 
-        self.set_jwt_auth_active(False)
-        self.save()
+        current_user.set_jwt_auth_active(False)
+        current_user.save()
 
         return {"success": True}, 200
 
@@ -323,14 +323,16 @@ class Vote(Resource):
 
         choice = None
         try:
-            choice = bool(req_data.get('choice'))
+            choice = req_data.get('choice')
         except:
             return {"success": False, "msg": "Voting choice incorrectly formatted"}, 400
 
-        if choice:
+        if choice == "True":
             vote.save()
             return vote.toJSON(), 200
-        else:
+        elif choice == "False":
             vote.delete()
             return {"success": True, "msg": "Vote removed"}, 200
+        else:
+            return {"success": False, "msg": "Voting choice incorrectly formatted"}, 400
 
