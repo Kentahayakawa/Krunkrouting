@@ -175,6 +175,51 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Get user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{leader-token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"user_id\": {{leader-id}}\r\n}"
+						},
+						"url": {
+							"raw": "localhost:5000/api/users",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"users"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -274,11 +319,227 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Get group",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{leader-token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"group_id\": {{default-group-id}}\r\n}"
+						},
+						"url": {
+							"raw": "localhost:5000/api/groups",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"groups"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
 		{
-			"name": "GET Group",
+			"name": "Places",
+			"item": [
+				{
+					"name": "(Eugene) Get places near UCLA",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{eugene-token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "localhost:5000/api/places?name=UCLA",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"places"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "UCLA"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "(Leader) Vote",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{leader-token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"place_id\": \"crocodile\"\r\n}"
+						},
+						"url": {
+							"raw": "localhost:5000/api/vote",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"vote"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "(Leader) Vote 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{leader-token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"place_id\": \"banana\"\r\n}"
+						},
+						"url": {
+							"raw": "localhost:5000/api/vote",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"vote"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "(Eugene) Vote",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{eugene-token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"place_id\": \"crocodile\"\r\n}"
+						},
+						"url": {
+							"raw": "localhost:5000/api/vote",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"vote"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Testing",
 			"event": [
 				{
 					"listen": "test",
@@ -306,17 +567,17 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"group_id\": {{default-group-id}}\r\n}"
+					"raw": "{\r\n    \r\n}"
 				},
 				"url": {
-					"raw": "localhost:5000/api/groups",
+					"raw": "localhost:5000/api/testing",
 					"host": [
 						"localhost"
 					],
 					"port": "5000",
 					"path": [
 						"api",
-						"groups"
+						"testing"
 					]
 				}
 			},
