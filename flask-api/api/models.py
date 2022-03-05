@@ -130,8 +130,23 @@ class Votes(db.Model):
     group = db.relationship('Groups', backref=db.backref('votes', lazy=True), foreign_keys=[group_id])
 
     def save(self):
-        db.session.add(self)
-        db.session.commit()
+        # Check for double voting; We only want one vote per user & bar.
+        exists = self.find_vote(self.user_id, self.place_id)
+        if exists is None:
+            db.session.add(self)
+            db.session.commit()
+    
+    def delete(self):
+        # Make sure vote actually exists before you try to delete it.
+        exists = self.find_vote(self.user_id, self.place_id)
+        if exists is not None:
+            db.session.delete(exists)
+            db.session.commit()
+    
+    @classmethod
+    def find_vote(cls, user_id, place_id):
+        found_vote = db.session.query(Votes).filter(Votes.user_id==user_id, Votes.place_id==place_id).first()
+        return found_vote 
 
     def toJSON(self):
         return {'user_id': self.user_id, 'place_id': self.place_id}
