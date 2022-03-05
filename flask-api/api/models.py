@@ -131,14 +131,23 @@ class Votes(db.Model):
 
     def save(self):
         # Check for double voting; We only want one vote per user & bar.        
-        vote_exists = db.session.query.filter_by(user_id=user_id, place_id=place_id)
-        if vote_exists is not None:
+        if not self.vote_exists(self.user_id, self.place_id):
             db.session.add(self)
             db.session.commit()
     
     def delete(self):
         db.session.delete(self)
         db.session.commit()
+    
+    @classmethod
+    def vote_exists(cls, user_id, place_id):
+        exists = cls.query.filter(cls.user_id==user_id, cls.place_id==place_id).first()
+        print(exists)
+        if exists is not None:
+            return True
+        else:
+            return False
+
 
     def toJSON(self):
         return {'user_id': self.user_id, 'place_id': self.place_id}
