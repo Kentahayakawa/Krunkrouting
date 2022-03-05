@@ -208,8 +208,8 @@ class LogoutUser(Resource):
         jwt_block = JWTTokenBlocklist(jwt_token=_jwt_token, created_at=datetime.now(timezone.utc))
         jwt_block.save()
 
-        self.set_jwt_auth_active(False)
-        self.save()
+        current_user.set_jwt_auth_active(False)
+        current_user.save()
 
         return {"success": True}, 200
 
