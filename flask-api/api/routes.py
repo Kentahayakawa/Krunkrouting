@@ -126,7 +126,7 @@ class Register(Resource):
             return {"success": False,
                     "msg": "Email already taken"}, 400
 
-        new_user = Users(username=_username, email=_email)
+        new_user = Users(username=_username.capitalize(), email=_email)
 
         new_user.set_password(_password)
         new_user.save()

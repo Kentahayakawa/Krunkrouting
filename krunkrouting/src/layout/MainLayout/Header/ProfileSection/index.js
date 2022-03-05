@@ -122,6 +122,7 @@ const ProfileSection = () => {
     const theme = useTheme();
     const customization = useSelector((state) => state.customization);
     const account = useSelector((state) => state.account);
+    const username = account.user.username;
     const dispatcher = useDispatch();
 
     const [sdm, setSdm] = React.useState(true);
@@ -215,9 +216,9 @@ const ProfileSection = () => {
                                     <CardContent className={classes.cardContent}>
                                         <Grid container direction="column" spacing={0}>
                                             <Grid item className={classes.flex}>
-                                                <Typography variant="h4">Good Morning,</Typography>
+                                                <Typography variant="h4">Hello,</Typography>
                                                 <Typography component="span" variant="h4" className={classes.name}>
-                                                    John
+                                                    {username}
                                                 </Typography>
                                             </Grid>
                                             <Grid item>
