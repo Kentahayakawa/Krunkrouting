@@ -62,7 +62,6 @@ class Users(db.Model):
         result['group_id'] = self.group_id
         return result
 
-
 class Groups(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     invite_code = db.Column(db.String(6), nullable=False, unique=True)
@@ -120,3 +119,33 @@ class JWTTokenBlocklist(db.Model):
     def save(self):
         db.session.add(self)
         db.session.commit()
+
+
+class Schedule(db.Model):
+    id = db.Column(db.Integer(), primary_key=True)
+    name = db.Column(db.String(), nullable=False)
+    time = db.Column(db.DateTime(), default=datetime.utcnow)
+
+    def __init__(self, event_name, event_time):
+        self.name = event_name
+        self.time = event_time
+        
+    def __repr__(self) -> str:
+        return f"Schedule {self.id} {self.name} {self.time}"
+    
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def schedule_serializer(schedule):
+        return {
+            'name': schedule.name,
+            'time': schedule.time
+        }
+    
+    def toJSON(self):
+        result = {}
+        result['_id'] = self.id
+        result['name'] = self.name
+        result['time'] = self.time
+        return result

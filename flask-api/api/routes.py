@@ -58,6 +58,25 @@ get_group_model = rest_api.model(
     }
 )
 
+get_schedule_model = rest_api.model(
+    'GetScheduleModel',
+    {
+        "schedule_id": fields.String(required=True, min_length=1, max_length=30),
+        "schedule_name": fields.String(required=True, min_length=1, max_length=30),
+        "time": fields.DateTime(default=datetime.utcnow)
+    }
+)
+
+add_schedule_model = rest_api.model(
+    'AddScheduleModel',
+    {}
+)
+
+delete_schedule_model = rest_api.model(
+    'DeleteScheduleModel',
+    {}
+)
+
 """
 Helper function for JWT token required
 """
@@ -268,3 +287,34 @@ class Group(Resource):
         _group = Groups.get_by_id(req_data.get('group_id'))
 
         return _group.toJSON(), 200
+
+    
+from flask import jsonify
+
+@rest_api.route('/api/schedule')
+class Schedule(Resource):
+    @rest_api.expect(get_schedule_model)
+    def get(self):
+        return jsonify([*map(schedule_serializer, Schedules.query.all())])
+
+@rest_api.route('/api/schedule/add')
+class AddSchedule(Resource):
+    @rest_api.expect(add_schedule_model)
+    def post(self):
+        req_data = request.get_json()
+        name = req_data.get('name')
+        time = req_data.get('time')
+        new_event = Schedules(name=name, time=time)
+        new_event.save()
+        return new_event.toJSON(), 200
+
+@rest_api.route('/api/schedule/delete')
+class DeleteSchedule(Resource):
+    @rest_api.expect(delete_schedule_model)
+    def delete(self, schedule_id):
+        to_delete =Schedules.query.get_or_404(schedule_id)
+        to_delete.delete()
+        return to_delete.toJSON(), 200
+        
+
+            
