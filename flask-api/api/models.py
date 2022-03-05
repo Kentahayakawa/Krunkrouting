@@ -14,7 +14,7 @@ class Users(db.Model):
     password = db.Column(db.Text())
     jwt_auth_active = db.Column(db.Boolean())
     date_joined = db.Column(db.DateTime(), default=datetime.utcnow)
-
+    
     group_id = db.Column(db.Integer(), db.ForeignKey('groups.id'))
     group = db.relationship('Groups', backref=db.backref('members', lazy=True), foreign_keys=[group_id])
 
@@ -40,6 +40,9 @@ class Users(db.Model):
     def join_group(self, new_group):
         self.group_id = new_group.id
 
+    def get_group_id(self):
+        return self.group_id
+    
     def check_jwt_auth_active(self):
         return self.jwt_auth_active
 
@@ -121,26 +124,30 @@ class JWTTokenBlocklist(db.Model):
         db.session.commit()
 
 
-class Schedule(db.Model):
+class Events(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(), nullable=False)
     time = db.Column(db.DateTime(), default=datetime.utcnow)
+    
+    assoc_group_id = db.Column(db.Integer(), db.ForeignKey('groups.id'))
+    group = db.relationship('Groups', backref=db.backref('events', lazy=True), foreign_keys=[group_id])
 
     def __init__(self, event_name, event_time):
         self.name = event_name
         self.time = event_time
         
     def __repr__(self) -> str:
-        return f"Schedule {self.id} {self.name} {self.time}"
-    
+        return f"Event {self.id} {self.name} {self.time}"
+
+        
     def save(self):
         db.session.add(self)
         db.session.commit()
 
-    def schedule_serializer(schedule):
+    def event_serializer(event):
         return {
-            'name': schedule.name,
-            'time': schedule.time
+            'name': event.name,
+            'time': event.time
         }
     
     def toJSON(self):

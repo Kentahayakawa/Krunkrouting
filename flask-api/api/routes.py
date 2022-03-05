@@ -61,7 +61,6 @@ get_group_model = rest_api.model(
 get_schedule_model = rest_api.model(
     'GetScheduleModel',
     {
-        "schedule_id": fields.String(required=True, min_length=1, max_length=30),
         "schedule_name": fields.String(required=True, min_length=1, max_length=30),
         "time": fields.DateTime(default=datetime.utcnow)
     }
@@ -288,31 +287,32 @@ class Group(Resource):
 
         return _group.toJSON(), 200
 
-    
+
 from flask import jsonify
 
-@rest_api.route('/api/schedule')
-class Schedule(Resource):
-    @rest_api.expect(get_schedule_model)
-    def get(self):
-        return jsonify([*map(schedule_serializer, Schedules.query.all())])
+@rest_api.route('/api/events')
+class Event(Resource):
+    @rest_api.expect(get_event_model)
+    def get(self, current_user):
+        return jsonify([*map(event_serializer, Events.query.filter_by(assoc_group_id=current_user.group_id).all())])
 
-@rest_api.route('/api/schedule/add')
-class AddSchedule(Resource):
-    @rest_api.expect(add_schedule_model)
-    def post(self):
+@rest_api.route('/api/events/add')
+class AddEvent(Resource):
+    @rest_api.expect(add_event_model)
+    def post(self, current_user):
         req_data = request.get_json()
         name = req_data.get('name')
         time = req_data.get('time')
-        new_event = Schedules(name=name, time=time)
+        assoc_group_id = current_user.get_group_id()
+        new_event = Events(name=name, time=time, assoc_group_id=assoc_group_id)
         new_event.save()
         return new_event.toJSON(), 200
 
-@rest_api.route('/api/schedule/delete')
-class DeleteSchedule(Resource):
-    @rest_api.expect(delete_schedule_model)
-    def delete(self, schedule_id):
-        to_delete =Schedules.query.get_or_404(schedule_id)
+@rest_api.route('/api/events/delete')
+class DeleteEvent(Resource):
+    @rest_api.expect(delete_event_model)
+    def delete(self, event_id):
+        to_delete = Events.query.get_or_404(event_id)
         to_delete.delete()
         return to_delete.toJSON(), 200
         
