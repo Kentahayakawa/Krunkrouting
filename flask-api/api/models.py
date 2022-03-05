@@ -136,13 +136,14 @@ class Votes(db.Model):
             db.session.commit()
     
     def delete(self):
-        db.session.delete(self)
-        db.session.commit()
+        # Make sure vote actually exists before you try to delete it.        
+        if self.vote_exists(self.user_id, self.place_id):
+            db.session.delete(db.session.query(Votes).filter(Votes.user_id==self.user_id, Votes.place_id==self.place_id).first())
+            db.session.commit()
     
     @classmethod
     def vote_exists(cls, user_id, place_id):
-        exists = cls.query.filter(cls.user_id==user_id, cls.place_id==place_id).first()
-        print(exists)
+        exists = db.session.query(Votes).filter(Votes.user_id==user_id, Votes.place_id==place_id).first()
         if exists is not None:
             return True
         else:
