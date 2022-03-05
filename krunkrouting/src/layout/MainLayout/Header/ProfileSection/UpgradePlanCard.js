@@ -15,28 +15,6 @@ const useStyles = makeStyles((theme) => ({
         marginBottom: '16px',
         overflow: 'hidden',
         position: 'relative',
-        '&:after': {
-            content: '""',
-            position: 'absolute',
-            width: '200px',
-            height: '200px',
-            border: '19px solid ',
-            borderColor: theme.palette.secondary.main,
-            borderRadius: '50%',
-            top: '65px',
-            right: '-150px'
-        },
-        '&:before': {
-            content: '""',
-            position: 'absolute',
-            width: '200px',
-            height: '200px',
-            border: '3px solid ',
-            borderColor: theme.palette.secondary.main,
-            borderRadius: '50%',
-            top: '145px',
-            right: '-70px'
-        }
     },
     tagLine: {
         color: theme.palette.grey[900],
@@ -60,19 +38,19 @@ const UpgradePlanCard = () => {
 
     return (
         <Card className={classes.card}>
-            <Grid container direction="column" justifyContent="center">
-                <Grid container direction="row" justifyContent="center">
-                    <Typography variant="h4">
+            <Grid container direction="column" spacing={4}>
+                <Grid item xs={12}>
+                    <Typography variant="h4" align="center">
                         Group Code
                     </Typography>
                 </Grid>
-                <Grid container direction = "row" justifyContent="center">
-                    <Typography variant="subtitle2" className={classes.tagLine}>
+                <Grid item xs={12}>
+                    <Typography variant="subtitle2" className={classes.tagLine} align="center">
                         Open-source full-stack seed project.
                     </Typography>
                 </Grid>
-                <Grid container direction="row" justifyContent="center">
-                    <Stack direction="column" justifyContent="center">
+                <Grid item xs={12}>
+                    <Stack direction="column" justifyContent="center" align="center">
                         See Product
                     </Stack>
                 </Grid>
