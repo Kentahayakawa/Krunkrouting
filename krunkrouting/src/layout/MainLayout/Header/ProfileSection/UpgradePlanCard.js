@@ -10,7 +10,7 @@ import AnimateButton from './../../../../ui-component/extended/AnimateButton';
 // style constant
 const useStyles = makeStyles((theme) => ({
     card: {
-        background: theme.palette.warning.light,
+        background: theme.palette.primary.light,
         marginTop: '16px',
         marginBottom: '16px',
         overflow: 'hidden',
@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme) => ({
             width: '200px',
             height: '200px',
             border: '19px solid ',
-            borderColor: theme.palette.warning.main,
+            borderColor: theme.palette.secondary.main,
             borderRadius: '50%',
             top: '65px',
             right: '-150px'
@@ -32,7 +32,7 @@ const useStyles = makeStyles((theme) => ({
             width: '200px',
             height: '200px',
             border: '3px solid ',
-            borderColor: theme.palette.warning.main,
+            borderColor: theme.palette.secondary.main,
             borderRadius: '50%',
             top: '145px',
             right: '-70px'
@@ -60,35 +60,23 @@ const UpgradePlanCard = () => {
 
     return (
         <Card className={classes.card}>
-            <CardContent>
-                <Grid container direction="column" spacing={2}>
-                    <Grid item>
-                        <Typography variant="h4">
-                            React Nodejs Berry
-                        </Typography>
-                    </Grid>
-                    <Grid item>
-                        <Typography variant="subtitle2" className={classes.tagLine}>
-                            Open-source full-stack seed project.
-                        </Typography>
-                    </Grid>
-                    <Grid item>
-                        <Stack direction="row">
-                            <AnimateButton>
-                                <Button
-                                    component={Link}
-                                    href="https://appseed.us/product/react-node-js-berry-dashboard"
-                                    target="_blank"
-                                    variant="contained"
-                                    className={classes.button}
-                                >
-                                    See Product
-                                </Button>                                
-                            </AnimateButton>
-                        </Stack>
-                    </Grid>
+            <Grid container direction="column" justifyContent="center">
+                <Grid container direction="row" justifyContent="center">
+                    <Typography variant="h4">
+                        Group Code
+                    </Typography>
                 </Grid>
-            </CardContent>
+                <Grid container direction = "row" justifyContent="center">
+                    <Typography variant="subtitle2" className={classes.tagLine}>
+                        Open-source full-stack seed project.
+                    </Typography>
+                </Grid>
+                <Grid container direction="row" justifyContent="center">
+                    <Stack direction="column" justifyContent="center">
+                        See Product
+                    </Stack>
+                </Grid>
+            </Grid>
         </Card>
     );
 };
