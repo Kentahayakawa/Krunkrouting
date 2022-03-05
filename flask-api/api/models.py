@@ -76,6 +76,8 @@ class Groups(db.Model):
     leader_id = db.Column(db.Integer(), db.ForeignKey('users.id'), nullable=False)
     leader = db.relationship('Users', foreign_keys=[leader_id])
 
+    events = db.relationship('Events', backref="events", lazy='select')
+
     def __init__(self, leader_id):
         self.leader_id = leader_id
         self.invite_code = self._get_unused_invite_code()
@@ -157,9 +159,13 @@ class Events(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(), nullable=False)
     #time = db.Column(db.DateTime(), default=datetime.utcnow)
+
+    #assoc_group_id = db.Column(db.Integer(), db.ForeignKey('groups.id'))
+    #group = db.relationship('Groups', backref=db.backref("events", lazy=True), foreign_keys=[assoc_group_id])
     
-    event_group_id = db.Column(db.Integer(), db.ForeignKey('groups.id'))
-    group = db.relationship('Groups', backref=db.backref('events', lazy=True), foreign_keys=[event_group_id])
+    group_id = db.Column(db.Integer(), db.ForeignKey('group.id'))
+
+    
 
     def __init__(self, event_name):#, event_time):
         self.name = event_name

@@ -358,14 +358,16 @@ add_event_model = rest_api.model(
 
 delete_event_model = rest_api.model(
     'DeleteEventModel',
-    {
-    }
+    {}
 )
 
 @rest_api.route('/api/events')
 class GetEvents(Resource):
     def post(self, current_user):
-        return current_user.group.events
+        return {
+            "success": True,
+            "Events": current_user.group.events.toJSON()
+        }, 200
         
 
 
