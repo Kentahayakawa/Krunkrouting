@@ -1,17 +1,11 @@
-# -*- encoding: utf-8 -*-
-"""
-Copyright (c) 2019 - present AppSeed.us
-"""
-
 from datetime import datetime
-
-import json
+import random
+import string
 
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
-
 
 class Users(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
@@ -20,6 +14,9 @@ class Users(db.Model):
     password = db.Column(db.Text())
     jwt_auth_active = db.Column(db.Boolean())
     date_joined = db.Column(db.DateTime(), default=datetime.utcnow)
+
+    group_id = db.Column(db.Integer(), db.ForeignKey('groups.id'))
+    group = db.relationship('Groups', backref=db.backref('members', lazy=True), foreign_keys=[group_id])
 
     def __repr__(self):
         return f"User {self.username}"
@@ -40,6 +37,9 @@ class Users(db.Model):
     def update_username(self, new_username):
         self.username = new_username
 
+    def join_group(self, new_group):
+        self.group_id = new_group.id
+
     def check_jwt_auth_active(self):
         return self.jwt_auth_active
 
@@ -54,19 +54,60 @@ class Users(db.Model):
     def get_by_email(cls, email):
         return cls.query.filter_by(email=email).first()
 
-    def toDICT(self):
+    def toJSON(self):
+        result = {}
+        result['_id'] = self.id
+        result['username'] = self.username
+        result['email'] = self.email
+        result['group_id'] = self.group_id
+        return result
 
-        cls_dict = {}
-        cls_dict['_id'] = self.id
-        cls_dict['username'] = self.username
-        cls_dict['email'] = self.email
 
-        return cls_dict
+class Groups(db.Model):
+    id = db.Column(db.Integer(), primary_key=True)
+    invite_code = db.Column(db.String(6), nullable=False, unique=True)
+
+    leader_id = db.Column(db.Integer(), db.ForeignKey('users.id'), nullable=False)
+    leader = db.relationship('Users', foreign_keys=[leader_id])
+
+    def __init__(self, leader_id):
+        self.leader_id = leader_id
+        self.invite_code = self._get_unused_invite_code()
+
+    def __repr__(self) -> str:
+        return f"Group {self.id} (leader: {self.leader.username})"
+    
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
+
+    @classmethod
+    def get_by_id(cls, id):
+        return cls.query.get_or_404(id)
+        
+    def _get_unused_invite_code(self):
+        """
+        Generates random invite codes until it finds an unused one, and then returns that.
+        """
+        def gen_invite_code():
+            return ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
+
+        result = gen_invite_code()
+        while(Groups.get_by_invite_code(result)):
+            result = gen_invite_code()
+        return result
+
+    @classmethod
+    def get_by_invite_code(cls, invite_code):
+        return cls.query.filter_by(invite_code=invite_code).first()
 
     def toJSON(self):
-
-        return self.toDICT()
-
+        result = {}
+        result['_id'] = self.id
+        result['invite_code'] = self.invite_code
+        result['leader'] = self.leader.toJSON()
+        result['members'] = [member.toJSON() for member in self.members]
+        return result
 
 class JWTTokenBlocklist(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
