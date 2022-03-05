@@ -3,6 +3,7 @@ from email.policy import default
 import random
 import string
 from collections import defaultdict
+import json
 
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
@@ -16,7 +17,7 @@ class Users(db.Model):
     password = db.Column(db.Text())
     jwt_auth_active = db.Column(db.Boolean())
     date_joined = db.Column(db.DateTime(), default=datetime.utcnow)
-
+    
     group_id = db.Column(db.Integer(), db.ForeignKey('groups.id'))
     group = db.relationship('Groups', backref=db.backref('members', lazy=True), foreign_keys=[group_id])
 
@@ -42,6 +43,9 @@ class Users(db.Model):
     def join_group(self, new_group):
         self.group_id = new_group.id
 
+    def get_group_id(self):
+        return self.group_id
+    
     def check_jwt_auth_active(self):
         return self.jwt_auth_active
 
@@ -64,7 +68,6 @@ class Users(db.Model):
         result['group_id'] = self.group_id
         result['votes'] = [v.place_id for v in self.votes]
         return result
-
 
 class Groups(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
@@ -130,8 +133,23 @@ class Votes(db.Model):
     group = db.relationship('Groups', backref=db.backref('votes', lazy=True), foreign_keys=[group_id])
 
     def save(self):
-        db.session.add(self)
-        db.session.commit()
+        # Check for double voting; We only want one vote per user & bar.
+        exists = self.find_vote(self.user_id, self.place_id)
+        if exists is None:
+            db.session.add(self)
+            db.session.commit()
+    
+    def delete(self):
+        # Make sure vote actually exists before you try to delete it.
+        exists = self.find_vote(self.user_id, self.place_id)
+        if exists is not None:
+            db.session.delete(exists)
+            db.session.commit()
+    
+    @classmethod
+    def find_vote(cls, user_id, place_id):
+        found_vote = db.session.query(Votes).filter(Votes.user_id==user_id, Votes.place_id==place_id).first()
+        return found_vote 
 
     def toJSON(self):
         return {'user_id': self.user_id, 'place_id': self.place_id}
@@ -147,3 +165,40 @@ class JWTTokenBlocklist(db.Model):
     def save(self):
         db.session.add(self)
         db.session.commit()
+
+
+
+class Events(db.Model):
+    id = db.Column(db.Integer(), primary_key=True)
+    name = db.Column(db.String(), nullable=False)
+    #time = db.Column(db.DateTime(), default=datetime.utcnow)
+    
+    event_group_id = db.Column(db.Integer(), db.ForeignKey('groups.id'))
+    group = db.relationship('Groups', backref=db.backref('events', lazy=True), foreign_keys=[event_group_id])
+
+    def __init__(self, event_name):#, event_time):
+        self.name = event_name
+        #self.time = event_time
+        
+    def __repr__(self) -> str:
+        return f"Event {self.id} {self.name}"# {self.time}"
+
+        
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def delete(self):
+        exists = db.session.query(Events).filter(Events.name == self.name).first()
+        if exists is not None:
+            db.session.delete(exists)
+            db.session.commit()
+
+    def get_by_id(cls, id):
+        return cls.query.get_or_404(id)
+
+    def toJSON(self):
+        result = {}
+        result['name'] = self.name
+        #result['time'] = self.time
+        return result
