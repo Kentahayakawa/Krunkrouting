@@ -2,7 +2,7 @@ from datetime import datetime, timezone, timedelta
 from functools import wraps
 from flask import request
 from flask_restx import Api, Resource, fields, reqparse
-import jwt
+import jwt, json
 
 from .models import *
 from .config import BaseConfig
@@ -329,6 +329,10 @@ class Vote(Resource):
      
 
 
+
+
+
+
 get_group_model = rest_api.model(
     'GetGroupModel',
     {
@@ -339,47 +343,48 @@ get_group_model = rest_api.model(
 get_event_model = rest_api.model(
     'GetEventModel',
     {
-        "event_name": fields.String(required=True, min_length=1, max_length=30),
-        "time": fields.DateTime(default=datetime.utcnow)
+        "event_name": fields.String(required=True, min_length=1, max_length=30)
+        #"time": fields.DateTime(default=datetime.utcnow)
     }
 )
 
 add_event_model = rest_api.model(
     'AddEventModel',
-    {}
+    {
+        "name": fields.String(required=True, min_length=1, max_length=30)
+        #"time": fields.DateTime(default=datetime.utcnow)
+    }
 )
 
 delete_event_model = rest_api.model(
     'DeleteEventModel',
-    {}
+    {
+    }
 )
 
 @rest_api.route('/api/events')
-class Event(Resource):
-    @rest_api.expect(get_event_model)
-    def get(self, current_user):
-        return {
-            "success": True,
-            "event": current_user.group.events.toJSON()
-        }, 200
+class GetEvents(Resource):
+    def post(self, current_user):
+        return current_user.group.events
+        
+
 
 @rest_api.route('/api/events/add')
 class AddEvent(Resource):
-    @rest_api.expect(add_event_model)
-    def post(self, current_user):
+    def post(self):
         req_data = request.get_json()
         name = req_data.get('name')
-        time = req_data.get('time')
-        assoc_group_id = current_user.group_id
-        new_event = Events(name=name, time=time, assoc_group_id=assoc_group_id)
+        new_event = Events(name)
         new_event.save()
         return {"success": True, "event": new_event.toJSON()}, 200
 
 @rest_api.route('/api/events/delete')
 class DeleteEvent(Resource):
-    @rest_api.expect(delete_event_model)
-    def delete(self, event_id):
-        to_delete = Events.query.get_or_404(event_id)
+    def delete(self):
+        req_data = request.get_json()
+        to_delete = Events(req_data.get('name'))
         to_delete.delete()
-        return to_delete.toJSON(), 200
+        return {
+            "success": True
+        }, 200
 

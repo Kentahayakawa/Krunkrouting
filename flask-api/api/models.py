@@ -3,6 +3,7 @@ from email.policy import default
 import random
 import string
 from collections import defaultdict
+import json
 
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
@@ -151,34 +152,38 @@ class JWTTokenBlocklist(db.Model):
         db.session.commit()
 
 
+
 class Events(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(), nullable=False)
-    time = db.Column(db.DateTime(), default=datetime.utcnow)
+    #time = db.Column(db.DateTime(), default=datetime.utcnow)
     
-    assoc_group_id = db.Column(db.Integer(), db.ForeignKey('groups.id'))
-    group = db.relationship('Groups', backref=db.backref('events', lazy=True), foreign_keys=[assoc_group_id])
+    event_group_id = db.Column(db.Integer(), db.ForeignKey('groups.id'))
+    group = db.relationship('Groups', backref=db.backref('events', lazy=True), foreign_keys=[event_group_id])
 
-    def __init__(self, event_name, event_time):
+    def __init__(self, event_name):#, event_time):
         self.name = event_name
-        self.time = event_time
+        #self.time = event_time
         
     def __repr__(self) -> str:
-        return f"Event {self.id} {self.name} {self.time}"
+        return f"Event {self.id} {self.name}"# {self.time}"
 
         
     def save(self):
         db.session.add(self)
         db.session.commit()
 
-    def event_serializer(event):
-        return {
-            'name': event.name,
-            'time': event.time
-        }
-    
+    def delete(self):
+        exists = db.session.query(Events).filter(Events.name == self.name).first()
+        if exists is not None:
+            db.session.delete(exists)
+            db.session.commit()
+
+    def get_by_id(cls, id):
+        return cls.query.get_or_404(id)
+
     def toJSON(self):
         result = {}
         result['name'] = self.name
-        result['time'] = self.time
+        #result['time'] = self.time
         return result
