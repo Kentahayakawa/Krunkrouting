@@ -1,6 +1,8 @@
 from datetime import datetime
+from email.policy import default
 import random
 import string
+from collections import defaultdict
 
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
@@ -63,6 +65,7 @@ class Users(db.Model):
         result['username'] = self.username
         result['email'] = self.email
         result['group_id'] = self.group_id
+        result['votes'] = [v.place_id for v in self.votes]
         return result
 
 class Groups(db.Model):
@@ -104,12 +107,36 @@ class Groups(db.Model):
         return cls.query.filter_by(invite_code=invite_code).first()
 
     def toJSON(self):
+        def tallyVotes():
+            tally = defaultdict(lambda: 0)
+            for vote in self.votes:
+                tally[vote.place_id] += 1
+            return {k: v for k, v in sorted(tally.items(), key=lambda item: item[1], reverse=True)}
+
         result = {}
         result['_id'] = self.id
         result['invite_code'] = self.invite_code
         result['leader'] = self.leader.toJSON()
         result['members'] = [member.toJSON() for member in self.members]
+        result['votes'] = tallyVotes()
         return result
+
+class Votes(db.Model):
+    id = db.Column(db.Integer(), primary_key=True)
+    place_id = db.Column(db.String(32), nullable=False)
+
+    user_id = db.Column(db.Integer(), db.ForeignKey('users.id'), nullable=False)
+    user = db.relationship('Users', backref=db.backref('votes', lazy=True), foreign_keys=[user_id])
+
+    group_id = db.Column(db.Integer(), db.ForeignKey('groups.id'))
+    group = db.relationship('Groups', backref=db.backref('votes', lazy=True), foreign_keys=[group_id])
+
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def toJSON(self):
+        return {'user_id': self.user_id, 'place_id': self.place_id}
 
 class JWTTokenBlocklist(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
