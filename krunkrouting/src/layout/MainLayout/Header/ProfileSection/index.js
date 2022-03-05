@@ -122,7 +122,7 @@ const ProfileSection = () => {
     const theme = useTheme();
     const customization = useSelector((state) => state.customization);
     const account = useSelector((state) => state.account);
-    const username = account.user.username;
+    const username = account ? account.user.username: "John";
     const dispatcher = useDispatch();
 
     const [sdm, setSdm] = React.useState(true);
