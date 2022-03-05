@@ -328,7 +328,6 @@ class Vote(Resource):
 
      
 
-from flask import jsonify
 
 get_group_model = rest_api.model(
     'GetGroupModel',
@@ -337,21 +336,21 @@ get_group_model = rest_api.model(
     }
 )
 
-get_schedule_model = rest_api.model(
-    'GetScheduleModel',
+get_event_model = rest_api.model(
+    'GetEventModel',
     {
-        "schedule_name": fields.String(required=True, min_length=1, max_length=30),
+        "event_name": fields.String(required=True, min_length=1, max_length=30),
         "time": fields.DateTime(default=datetime.utcnow)
     }
 )
 
-add_schedule_model = rest_api.model(
-    'AddScheduleModel',
+add_event_model = rest_api.model(
+    'AddEventModel',
     {}
 )
 
-delete_schedule_model = rest_api.model(
-    'DeleteScheduleModel',
+delete_event_model = rest_api.model(
+    'DeleteEventModel',
     {}
 )
 
@@ -359,7 +358,10 @@ delete_schedule_model = rest_api.model(
 class Event(Resource):
     @rest_api.expect(get_event_model)
     def get(self, current_user):
-        return jsonify([*map(event_serializer, Events.query.filter_by(assoc_group_id=current_user.group_id).all())])
+        return {
+            "success": True,
+            "event": current_user.group.events.toJSON()
+        }, 200
 
 @rest_api.route('/api/events/add')
 class AddEvent(Resource):
@@ -368,10 +370,10 @@ class AddEvent(Resource):
         req_data = request.get_json()
         name = req_data.get('name')
         time = req_data.get('time')
-        assoc_group_id = current_user.get_group_id()
+        assoc_group_id = current_user.group_id
         new_event = Events(name=name, time=time, assoc_group_id=assoc_group_id)
         new_event.save()
-        return new_event.toJSON(), 200
+        return {"success": True, "event": new_event.toJSON()}, 200
 
 @rest_api.route('/api/events/delete')
 class DeleteEvent(Resource):

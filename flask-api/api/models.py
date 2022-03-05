@@ -157,7 +157,7 @@ class Events(db.Model):
     time = db.Column(db.DateTime(), default=datetime.utcnow)
     
     assoc_group_id = db.Column(db.Integer(), db.ForeignKey('groups.id'))
-    group = db.relationship('Groups', backref=db.backref('events', lazy=True), foreign_keys=[group_id])
+    group = db.relationship('Groups', backref=db.backref('events', lazy=True), foreign_keys=[assoc_group_id])
 
     def __init__(self, event_name, event_time):
         self.name = event_name
@@ -179,7 +179,6 @@ class Events(db.Model):
     
     def toJSON(self):
         result = {}
-        result['_id'] = self.id
         result['name'] = self.name
         result['time'] = self.time
         return result
