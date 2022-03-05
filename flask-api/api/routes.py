@@ -313,12 +313,24 @@ class Vote(Resource):
 
     @token_required
     def post(self, current_user):
-        req_data = request.get_json()
-        vote = Votes(
-            place_id=req_data.get('place_id'),
-            user_id=current_user.id,
-            group_id=current_user.group.id
-        )
-        vote.save()
+        req_data = request.get_json()        
 
-        return vote.toJSON(), 200
+        vote = Votes(
+                place_id=req_data.get('place_id'),
+                user_id=current_user.id,
+                group_id=current_user.group.id
+            )
+
+        choice = None
+        try:
+            choice = bool(req_data.get('choice'))
+        except:
+            return {"success": False, "msg": "Voting choice incorrectly formatted"}, 400
+
+        if choice:
+            vote.save()
+            return vote.toJSON(), 200
+        else:
+            vote.delete()
+            return {"success": True, "msg": "Vote removed"}, 200
+
