@@ -51,14 +51,6 @@ join_group_model = rest_api.model(
         "invite_code": fields.String(required=True, min_length=6, max_length=6)
     }
 )
-
-get_group_model = rest_api.model(
-    'GetGroupModel',
-    {
-        "group_id": fields.String(required=True, min_length=1, max_length=32)
-    }
-)
-
 """
 Helper function for JWT token required
 """
@@ -103,6 +95,17 @@ def token_required(f):
 Flask-Restx routes
 """
 
+@rest_api.route('/api/users')
+class GetUser(Resource):
+    """
+    Get information about a user.
+    """
+
+    @token_required
+    def post(self, current_user):
+        req_data = request.get_json()
+        _user = Users.get_by_id(req_data.get("user_id"))
+        return _user.toJSON(), 200
 
 @rest_api.route('/api/users/register')
 class Register(Resource):
@@ -257,18 +260,15 @@ class JoinGroup(Resource):
         }, 200
 
 @rest_api.route('/api/groups')
-class Group(Resource):
+class GetGroup(Resource):
     """
-    Get information about a group.
+    Get information about a user.
     """
 
-    @rest_api.expect(get_group_model)
-    # No token required for now, to make it easier to debug.
-    def get(self):
-        parser = reqparse.RequestParser()
-        parser.add_argument('group_id', type=str)
-        args = parser.parse_args()
-        _group = Groups.get_by_id(args['group_id'])
+    @token_required
+    def post(self, current_user):
+        req_data = request.get_json()
+        _group = Groups.get_by_id(req_data.get("group_id"))
         return _group.toJSON(), 200
 
 @rest_api.route('/api/places')
@@ -304,3 +304,21 @@ class Places(Resource):
             max_price = args['max_price'] if args['max_price'] else 4,
             min_rating = args['min_rating'] if args['min_rating'] else 0
         ), 200
+
+@rest_api.route('/api/vote')
+class Vote(Resource):
+    """
+    Cast a vote
+    """
+
+    @token_required
+    def post(self, current_user):
+        req_data = request.get_json()
+        vote = Votes(
+            place_id=req_data.get('place_id'),
+            user_id=current_user.id,
+            group_id=current_user.group.id
+        )
+        vote.save()
+
+        return vote.toJSON(), 200
