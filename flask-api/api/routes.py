@@ -1,11 +1,12 @@
 from datetime import datetime, timezone, timedelta
 from functools import wraps
 from flask import request
-from flask_restx import Api, Resource, fields
+from flask_restx import Api, Resource, fields, reqparse
 import jwt
 
 from .models import *
 from .config import BaseConfig
+from .navigation import *
 
 rest_api = Api(version="1.0", title="Users API")
 
@@ -260,11 +261,46 @@ class Group(Resource):
     """
     Get information about a group.
     """
-    
+
     @rest_api.expect(get_group_model)
     # No token required for now, to make it easier to debug.
-    def post(self):
-        req_data = request.get_json()
-        _group = Groups.get_by_id(req_data.get('group_id'))
-
+    def get(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('group_id', type=str)
+        args = parser.parse_args()
+        _group = Groups.get_by_id(args['group_id'])
         return _group.toJSON(), 200
+
+@rest_api.route('/api/places')
+class Places(Resource):
+    """
+    Get places near a location
+    """
+
+    @token_required
+    def get(self, current_user):
+        parser = reqparse.RequestParser()
+        parser.add_argument('name', type=str)
+        parser.add_argument('lat', type=str)
+        parser.add_argument('lng', type=str)
+        parser.add_argument('distance_bias', type=float)
+        parser.add_argument('min_price', type=int)
+        parser.add_argument('max_price', type=int)
+        parser.add_argument('min_rating', type=float)
+        args = parser.parse_args()
+
+        if args['lat'] and args['lon']:
+            lat_lng = (args['lat'], args['lon'])
+        elif args['name']:
+            lat_lng = to_coordinates(args['name'])
+        else:
+            # There's no way to find out where this is!
+            return {'status': 'failure', 'reason': 'neither name nor (lat, lng) was specified'}, 200
+        
+        return get_places(
+            coordinates=lat_lng,
+            radius = args['distance_bias'] if args['distance_bias'] else 5000,
+            min_price = args['min_price'] if args['min_price'] else 0,
+            max_price = args['max_price'] if args['max_price'] else 4,
+            min_rating = args['min_rating'] if args['min_rating'] else 0
+        ), 200
