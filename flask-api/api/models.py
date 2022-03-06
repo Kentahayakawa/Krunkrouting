@@ -110,19 +110,20 @@ class Groups(db.Model):
     def get_by_invite_code(cls, invite_code):
         return cls.query.filter_by(invite_code=invite_code).first()
 
-    def toJSON(self):
-        def tallyVotes():
+    def tallyVotes(self):
             tally = defaultdict(lambda: 0)
             for vote in self.votes:
                 tally[vote.place_id] += 1
             return {k: v for k, v in sorted(tally.items(), key=lambda item: item[1], reverse=True)}
 
+    def toJSON(self):
         result = {}
         result['_id'] = self.id
         result['invite_code'] = self.invite_code
         result['leader'] = self.leader.toJSON()
         result['members'] = [member.toJSON() for member in self.members]
-        result['votes'] = tallyVotes()
+        result['votes'] = self.tallyVotes()
+        result['events'] = [event.toJSON() for event in self.events]
         return result
 
 class Votes(db.Model):
@@ -177,7 +178,7 @@ class Events(db.Model):
     name = db.Column(db.String(), nullable=False)
     rating = db.Column(db.Integer(), nullable=False)
     price_level = db.Column(db.Integer(), nullable=False)
-    place_id = db.Column(db.String(32), nullable=False)
+    place_id = db.Column(db.Text(), nullable=False)
 
     #set after votings are over, use distance matrix
     event_ordering = db.Column(db.Integer(), nullable=False) 
@@ -192,8 +193,9 @@ class Events(db.Model):
         db.session.add(self)
         db.session.commit()
 
-    def delete(self):
-        exists = db.session.query(Events).filter(Events.name == self.name).first()
+    @classmethod
+    def delete(cls, place_id):
+        exists = db.session.query(Events).filter(Events.place_id == place_id).first()
         if exists is not None:
             db.session.delete(exists)
             db.session.commit()
@@ -207,8 +209,32 @@ class Events(db.Model):
         # 1 to n by distance
         pass
     
+    @classmethod
+    def finalize_events(cls, group_id, num_events):
+        ''' Sort the events by number of votes they received. Keep the first
+            num_events amount of events and remove the rest as they aren't 
+            popular enough to keep.'''
+        group = Groups.get_by_id(group_id)
+        votes = group.tallyVotes()
+        votes = dict(sorted(votes.items(), key=lambda x:x[1]))
+        drop_events = list(votes.keys())
+
+        # Skipping over the most popluar events
+        for i in range(num_events):
+            drop_events.pop()
+        
+        # Then remove the rest
+        for bar in drop_events:
+            cls.delete(bar)
+        
+
     def toJSON(self):
         result = {}
+        result['id'] = self.id
         result['name'] = self.name
+        result['group_id'] = self.group_id
+        result['price_level'] = self.price_level
+        result['place_id'] = self.place_id
+        result['event_ordering'] = self.event_ordering
         result['group_id'] = self.group_id
         return result
