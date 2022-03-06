@@ -123,6 +123,11 @@ const RestLogin = (props, { ...others }) => {
                                     });
                                     token = response.data.token;
                                     
+                                    if (scriptedRef.current) {
+                                        setStatus({ success: true });
+                                        setSubmitting(false);
+                                    }
+                                    
                                     try {
                                         axios
                                             .post( configData.API_SERVER + 'groups/create', {}, { headers: { Authorization: `${token}` } })
@@ -150,7 +155,7 @@ const RestLogin = (props, { ...others }) => {
                                             });
                                     } catch (err) {
                                         console.error(err);
-                                        if (scriptedRef.current) {
+                                        if (scriptedRef2.current) {
                                             setStatus({ success: false });
                                             setErrors({ submit: err.message });
                                             setSubmitting(false);
@@ -158,10 +163,6 @@ const RestLogin = (props, { ...others }) => {
                                     }
                                     //End of group creation
                                     //Continuation of ACCOUNT_INIT
-                                    if (scriptedRef.current) {
-                                        setStatus({ success: true });
-                                        setSubmitting(false);
-                                    }
                                 } else {
                                     setStatus({ success: false });
                                     setErrors({ submit: response.data.msg });
