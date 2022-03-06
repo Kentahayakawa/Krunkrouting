@@ -21,6 +21,7 @@ class Users(db.Model):
     group_id = db.Column(db.Integer(), db.ForeignKey('groups.id'))
     group = db.relationship('Groups', backref=db.backref('members', lazy=True), foreign_keys=[group_id])
 
+    
     def __repr__(self):
         return f"User {self.username}"
 
@@ -76,6 +77,8 @@ class Groups(db.Model):
     leader_id = db.Column(db.Integer(), db.ForeignKey('users.id'), nullable=False)
     leader = db.relationship('Users', foreign_keys=[leader_id])
 
+    #events = db.relationship('Events', backref=db.backref('groups'))
+
     def __init__(self, leader_id):
         self.leader_id = leader_id
         self.invite_code = self._get_unused_invite_code()
@@ -107,19 +110,20 @@ class Groups(db.Model):
     def get_by_invite_code(cls, invite_code):
         return cls.query.filter_by(invite_code=invite_code).first()
 
-    def toJSON(self):
-        def tallyVotes():
+    def tallyVotes(self):
             tally = defaultdict(lambda: 0)
             for vote in self.votes:
                 tally[vote.place_id] += 1
             return {k: v for k, v in sorted(tally.items(), key=lambda item: item[1], reverse=True)}
 
+    def toJSON(self):
         result = {}
         result['_id'] = self.id
         result['invite_code'] = self.invite_code
         result['leader'] = self.leader.toJSON()
         result['members'] = [member.toJSON() for member in self.members]
-        result['votes'] = tallyVotes()
+        result['votes'] = self.tallyVotes()
+        result['events'] = [event.toJSON() for event in self.events]
         return result
 
 class Votes(db.Model):
@@ -145,6 +149,7 @@ class Votes(db.Model):
         if exists is not None:
             db.session.delete(exists)
             db.session.commit()
+
     
     @classmethod
     def find_vote(cls, user_id, place_id):
@@ -171,25 +176,26 @@ class JWTTokenBlocklist(db.Model):
 class Events(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(), nullable=False)
-    #time = db.Column(db.DateTime(), default=datetime.utcnow)
-    
-    event_group_id = db.Column(db.Integer(), db.ForeignKey('groups.id'))
-    group = db.relationship('Groups', backref=db.backref('events', lazy=True), foreign_keys=[event_group_id])
+    rating = db.Column(db.Integer(), nullable=False)
+    price_level = db.Column(db.Integer(), nullable=False)
+    place_id = db.Column(db.Text(), nullable=False)
 
-    def __init__(self, event_name):#, event_time):
-        self.name = event_name
-        #self.time = event_time
-        
+    #set after votings are over, use distance matrix
+    event_ordering = db.Column(db.Integer(), nullable=False) 
+    
+    group_id = db.Column(db.Integer(), db.ForeignKey('groups.id'))
+    groups = db.relationship('Groups', backref=db.backref('events', lazy=True), foreign_keys=[group_id])
+
     def __repr__(self) -> str:
         return f"Event {self.id} {self.name}"# {self.time}"
 
-        
     def save(self):
         db.session.add(self)
         db.session.commit()
 
-    def delete(self):
-        exists = db.session.query(Events).filter(Events.name == self.name).first()
+    @classmethod
+    def delete(cls, place_id):
+        exists = db.session.query(Events).filter(Events.place_id == place_id).first()
         if exists is not None:
             db.session.delete(exists)
             db.session.commit()
@@ -197,8 +203,38 @@ class Events(db.Model):
     def get_by_id(cls, id):
         return cls.query.get_or_404(id)
 
+    @classmethod
+    def order_events(cls, group_id):
+        #modify db entries for all events corresponding to provided group id so that event ordering goes from
+        # 1 to n by distance
+        pass
+    
+    @classmethod
+    def finalize_events(cls, group_id, num_events):
+        ''' Sort the events by number of votes they received. Keep the first
+            num_events amount of events and remove the rest as they aren't 
+            popular enough to keep.'''
+        group = Groups.get_by_id(group_id)
+        votes = group.tallyVotes()
+        votes = dict(sorted(votes.items(), key=lambda x:x[1]))
+        drop_events = list(votes.keys())
+
+        # Skipping over the most popluar events
+        for i in range(num_events):
+            drop_events.pop()
+        
+        # Then remove the rest
+        for bar in drop_events:
+            cls.delete(bar)
+        
+
     def toJSON(self):
         result = {}
+        result['id'] = self.id
         result['name'] = self.name
-        #result['time'] = self.time
+        result['group_id'] = self.group_id
+        result['price_level'] = self.price_level
+        result['place_id'] = self.place_id
+        result['event_ordering'] = self.event_ordering
+        result['group_id'] = self.group_id
         return result

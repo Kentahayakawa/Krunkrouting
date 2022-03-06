@@ -308,6 +308,7 @@ class Places(Resource):
             min_rating = args['min_rating'] if args['min_rating'] else 0
         ), 200
 
+
 @rest_api.route('/api/vote')
 class Vote(Resource):
     """
@@ -373,34 +374,51 @@ add_event_model = rest_api.model(
 
 delete_event_model = rest_api.model(
     'DeleteEventModel',
-    {
-    }
+    {}
 )
 
+
+#only thing that needs attention and revision. Why wont it workkk
 @rest_api.route('/api/events')
 class GetEvents(Resource):
+    @token_required
     def post(self, current_user):
-        return current_user.group.events
-        
+        return {
+            "success": True,
+            "Events": current_user.group.events
+        }, 200
 
 
+#bug free finally
 @rest_api.route('/api/events/add')
 class AddEvent(Resource):
-    def post(self):
+    @token_required
+    def post(self, current_user):
         req_data = request.get_json()
-        name = req_data.get('name')
-        new_event = Events(name)
-        new_event.save()
-        return {"success": True, "event": new_event.toJSON()}, 200
+        event_name = req_data.get('name')
+        event_rating = req_data.get('rating')
+        price_level = req_data.get('price_level')
+        place_id = req_data.get('place_id')
 
-@rest_api.route('/api/events/delete')
-class DeleteEvent(Resource):
-    def delete(self):
+        new_event = Events(name = event_name, 
+                        rating = event_rating, 
+                        price_level=price_level, 
+                        place_id=place_id, 
+                        event_ordering = 0,
+                        group_id = current_user.group.id
+        )
+        new_event.save()
+        return {"success": True, "Added event": new_event.toJSON()}, 200
+
+
+#bug free finally
+@rest_api.route('/api/events/finalize')
+class FinalizeEvent(Resource):
+    @token_required
+    def post(self, current_user):
         req_data = request.get_json()
-        to_delete = Events(req_data.get('name'))
-        to_delete.delete()
-        return {
-            "success": True
-        }, 200
+        num_events = req_data.get('num_events')
+        Events.finalize_events(group_id=current_user.group_id, num_events=num_events)
+        return {"success": True, "msg": "Events have been finilized."}, 200
 
 
