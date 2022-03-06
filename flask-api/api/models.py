@@ -106,6 +106,24 @@ class Groups(db.Model):
             result = gen_invite_code()
         return result
 
+    def remove_member(self, member):
+        """
+        Removes a user from the member list when user leaves the group.
+        """
+        members = []
+        for keepmember in self.mebers:
+            if keepmember.id != member.id:
+                members.append(keepmember)
+        self.members = members
+
+        if (self.leader_id == member.id):
+            if(len(members) != 0):
+                self.leader_id = members[0].id
+            else:
+                db.session.query(self).delete()
+        
+        db.session.commit()
+
     @classmethod
     def get_by_invite_code(cls, invite_code):
         return cls.query.filter_by(invite_code=invite_code).first()
