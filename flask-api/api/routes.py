@@ -127,7 +127,7 @@ class Register(Resource):
             return {"success": False,
                     "msg": "Email already taken"}, 400
 
-        new_user = Users(username=_username, email=_email)
+        new_user = Users(username=_username.capitalize(), email=_email)
 
         new_user.set_password(_password)
         new_user.save()
@@ -209,8 +209,8 @@ class LogoutUser(Resource):
         jwt_block = JWTTokenBlocklist(jwt_token=_jwt_token, created_at=datetime.now(timezone.utc))
         jwt_block.save()
 
-        self.set_jwt_auth_active(False)
-        self.save()
+        current_user.set_jwt_auth_active(False)
+        current_user.save()
 
         return {"success": True}, 200
 
@@ -316,13 +316,28 @@ class Vote(Resource):
 
     @token_required
     def post(self, current_user):
-        req_data = request.get_json()
+        req_data = request.get_json()        
+
         vote = Votes(
-            place_id=req_data.get('place_id'),
-            user_id=current_user.id,
-            group_id=current_user.group.id
-        )
-        vote.save()
+                place_id=req_data.get('place_id'),
+                user_id=current_user.id,
+                group_id=current_user.group.id
+            )
+
+        choice = None
+        try:
+            choice = req_data.get('choice')
+        except:
+            return {"success": False, "msg": "Voting choice incorrectly formatted"}, 400
+
+        if choice == "True":
+            vote.save()
+            return vote.toJSON(), 200
+        elif choice == "False":
+            vote.delete()
+            return {"success": True, "msg": "Vote removed"}, 200
+        else:
+            return {"success": False, "msg": "Voting choice incorrectly formatted"}, 400
 
         return vote.toJSON(), 200
 
@@ -389,4 +404,5 @@ class DeleteEvent(Resource):
         return {
             "success": True
         }, 200
+
 
