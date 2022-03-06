@@ -181,10 +181,12 @@ const SearchResultsCard = ({ isLoading }) => {
     const handleClose = () => {
         setAnchorEl(null);
     };
-
+    const shouldRender = (account && account.search_results && account.search_results.length !==0)? !isLoading: 0 
+    console.log(shouldRender);
+    console.log(account.search_results);
     return (
         <React.Fragment>
-            {isLoading ? (
+            {!shouldRender ? (
                 <SkeletonPopularCard />
             ) : (
                 <MainCard content={false}>
