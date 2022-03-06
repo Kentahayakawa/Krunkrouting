@@ -279,7 +279,7 @@ class GetGroup(Resource):
 
 
 @rest_api.route('/api/places')
-class Places(Resource):
+class NearbyPlaces(Resource):
     """
     Get places near a location
     """
@@ -304,15 +304,29 @@ class Places(Resource):
         else:
             # There's no way to find out where this is!
             return {'status': 'failure', 'reason': 'neither name nor (lat, lng) was specified'}, 200
-        
-        return get_places(
+
+        places = get_places(
             coordinates=lat_lng,
             radius = args['distance_bias'] if args['distance_bias'] else 5000,
             min_price = args['min_price'] if args['min_price'] else 0,
             max_price = args['max_price'] if args['max_price'] else 4,
             min_rating = args['min_rating'] if args['min_rating'] else 0
-        ), 200
+        )
 
+        for place in places:
+            # Add to the cache
+            place_sql = Places(
+                place['id'],
+                place['name'],
+                place['address'],
+                place['lat'],
+                place['lng'],
+                place['price_level'],
+                place['rating']
+            )
+            place_sql.save()
+        
+        return [Places.get_by_place_id(place['id']).toJSON() for place in places], 200
 
 @rest_api.route('/api/vote')
 class Vote(Resource):
@@ -345,15 +359,6 @@ class Vote(Resource):
         else:
             return {"success": False, "msg": "Voting choice incorrectly formatted"}, 400
 
-        return vote.toJSON(), 200
-
-     
-
-
-
-
-
-
 get_group_model = rest_api.model(
     'GetGroupModel',
     {
@@ -382,48 +387,36 @@ delete_event_model = rest_api.model(
     {}
 )
 
-
-#only thing that needs attention and revision. Why wont it workkk
 @rest_api.route('/api/events')
 class GetEvents(Resource):
     @token_required
     def post(self, current_user):
         return {
             "success": True,
-            "Events": current_user.group.events
+            "Events": [event.toJSON() for event in current_user.group.events]
         }, 200
 
+@rest_api.route('/api/groups/finalize')
+class FinalizeGroupVotes(Resource):
+    """
+    Takes the top 3 votes from a group and finalizes them into the list of "events"
+    """
 
-#bug free finally
-@rest_api.route('/api/events/add')
-class AddEvent(Resource):
     @token_required
     def post(self, current_user):
-        req_data = request.get_json()
-        event_name = req_data.get('name')
-        event_rating = req_data.get('rating')
-        price_level = req_data.get('price_level')
-        place_id = req_data.get('place_id')
-
-        new_event = Events(name = event_name, 
-                        rating = event_rating, 
-                        price_level=price_level, 
-                        place_id=place_id, 
-                        event_ordering = 0,
-                        group_id = current_user.group.id
-        )
-        new_event.save()
-        return {"success": True, "Added event": new_event.toJSON()}, 200
-
-
-#bug free finally
-@rest_api.route('/api/events/finalize')
-class FinalizeEvent(Resource):
-    @token_required
-    def post(self, current_user):
-        req_data = request.get_json()
-        num_events = req_data.get('num_events')
-        Events.finalize_events(group_id=current_user.group_id, num_events=num_events)
-        return {"success": True, "msg": "Events have been finilized."}, 200
-
-
+        if current_user.id != current_user.group.leader.id:
+            # Only the leader can finalize a group's votes.
+            return {"success": False, "reason": "Must be leader to finalize group"}, 200
+        
+        event_place_ids = current_user.group.finalize_and_get_event_place_ids()
+        current_user.group.save()
+        for place_id in event_place_ids:
+            event = Events(place_id, current_user.group.id)
+            event.save()
+        
+        # ordering = optimal_travel_order(current_user.group.events)
+        Events.order_events(group_id=current_user.group_id, optimized_order=[e.place.name for e in current_user.group.events])
+        for event in current_user.group.events:
+            event.save()
+        
+        return {"success": [e.toJSON() for e in current_user.group.events]}, 200
