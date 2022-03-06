@@ -52,6 +52,13 @@ join_group_model = rest_api.model(
     }
 )
 
+get_group_model = rest_api.model(
+    'GetGroupModel',
+    {
+        "group_id": fields.String(required=True, min_length=1, max_length=32)
+    }
+)
+
 """
 Helper function for JWT token required
 """
@@ -349,12 +356,7 @@ class Vote(Resource):
 
 
 
-get_group_model = rest_api.model(
-    'GetGroupModel',
-    {
-        "group_id": fields.String(required=True, min_length=1, max_length=32)
-    }
-)
+
 
 get_event_model = rest_api.model(
     'GetEventModel',
