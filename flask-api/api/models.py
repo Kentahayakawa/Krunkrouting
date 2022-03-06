@@ -111,7 +111,7 @@ class Groups(db.Model):
         Removes a user from the member list when user leaves the group.
         """
         members = []
-        for keepmember in self.mebers:
+        for keepmember in self.members:
             if keepmember.id != member.id:
                 members.append(keepmember)
         self.members = members
@@ -120,7 +120,7 @@ class Groups(db.Model):
             if(len(members) != 0):
                 self.leader_id = members[0].id
             else:
-                db.session.query(self).delete()
+                db.session.delete(self)
         
         db.session.commit()
 

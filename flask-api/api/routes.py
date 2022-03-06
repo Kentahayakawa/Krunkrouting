@@ -224,7 +224,8 @@ class CreateGroup(Resource):
     @token_required
     def post(self, current_user):
         old_group = current_user.group
-        old_group.remove_member(current_user)
+        if not old_group == None:
+            old_group.remove_member(current_user)
         new_group = Groups(current_user.id)
         new_group.save()
         current_user.join_group(new_group)
@@ -254,7 +255,8 @@ class JoinGroup(Resource):
             # For example, if the current user is the leader of the
             # group then we would need to assign a new leader.
             old_group = current_user.group
-            old_group.remove_member(current_user)
+            if not old_group == None:
+                old_group.remove_member(current_user)
         
         current_user.join_group(_group)
         current_user.save()
