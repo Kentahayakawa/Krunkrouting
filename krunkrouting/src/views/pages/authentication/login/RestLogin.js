@@ -29,7 +29,7 @@ import axios from 'axios';
 // project imports
 import useScriptRef from '../../../../hooks/useScriptRef';
 import AnimateButton from '../../../../ui-component/extended/AnimateButton';
-import { ACCOUNT_INITIALIZE } from './../../../../store/actions';
+import { ACCOUNT_INITIALIZE, GROUP_INIT } from './../../../../store/actions';
 
 // assets
 import Visibility from '@material-ui/icons/Visibility';
@@ -81,6 +81,7 @@ const RestLogin = (props, { ...others }) => {
     const dispatcher = useDispatch();
 
     const scriptedRef = useScriptRef();
+    const scriptedRef2 = useScriptRef();
     const [checked, setChecked] = React.useState(true);
 
     const [showPassword, setShowPassword] = React.useState(false);
@@ -105,6 +106,8 @@ const RestLogin = (props, { ...others }) => {
                     password: Yup.string().max(255).required('Password is required')
                 })}
                 onSubmit={(values, { setErrors, setStatus, setSubmitting }) => {
+                    let token = null;
+                    //This was needed in here to make the group create occur sequentially after token was created.
                     try {
                         axios
                             .post( configData.API_SERVER + 'users/login', {
@@ -118,6 +121,43 @@ const RestLogin = (props, { ...others }) => {
                                         type: ACCOUNT_INITIALIZE,
                                         payload: { isLoggedIn: true, user: response.data.user, token: response.data.token }
                                     });
+                                    token = response.data.token;
+                                    
+                                    try {
+                                        axios
+                                            .post( configData.API_SERVER + 'groups/create', {}, { headers: { Authorization: `${token}` } })
+                                            .then(function (response2) {
+                                                if (response2.data.success) {
+                                                    console.log(response2.data);
+                                                    dispatcher({
+                                                        type: GROUP_INIT,
+                                                        payload: { group_invite_code: response2.data.group.invite_code}
+                                                    });
+                                                    if (scriptedRef2.current) {
+                                                        setStatus({ success: true });
+                                                        setSubmitting(false);
+                                                    }
+                                                } else {
+                                                    setStatus({ success: false });
+                                                    setErrors({ submit: response2.data.msg });
+                                                    setSubmitting(false);
+                                                }
+                                            })
+                                            .catch(function (error2) {
+                                                setStatus({ success: false });
+                                                setErrors({ submit: error2.response2.data.msg });
+                                                setSubmitting(false);
+                                            });
+                                    } catch (err) {
+                                        console.error(err);
+                                        if (scriptedRef.current) {
+                                            setStatus({ success: false });
+                                            setErrors({ submit: err.message });
+                                            setSubmitting(false);
+                                        }
+                                    }
+                                    //End of group creation
+                                    //Continuation of ACCOUNT_INIT
                                     if (scriptedRef.current) {
                                         setStatus({ success: true });
                                         setSubmitting(false);
@@ -141,7 +181,10 @@ const RestLogin = (props, { ...others }) => {
                             setSubmitting(false);
                         }
                     }
+                    
                 }}
+
+                
             >
                 {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
                     <form noValidate onSubmit={handleSubmit} {...others}>

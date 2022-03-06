@@ -1,5 +1,6 @@
 // action - account reducer
 export const LOGIN = 'LOGIN';
+export const GROUP_INIT = "GROUP_INIT";
 export const LOGOUT = 'LOGOUT';
 export const ACCOUNT_INITIALIZE = 'ACCOUNT_INITIALIZE';
 
