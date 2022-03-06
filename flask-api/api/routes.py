@@ -385,7 +385,7 @@ class GetEvents(Resource):
     def post(self, current_user):
         return {
             "success": True,
-            "Events": current_user.group.events
+            "Events": [event.toJSON() for event in current_user.group.events]
         }, 200
 
 
@@ -420,7 +420,7 @@ class FinalizeEvent(Resource):
         num_events = req_data.get('num_events')
         Events.finalize_events(group_id=current_user.group_id, num_events=num_events)
 
-        ordering = optimal_travel_order(current_user.group.events)
+        ordering = optimal_travel_order( [event for event in current_user.group.events] )
         Events.order_events(group_id=current_user.group_id, optimized_order=ordering)
         return {"success": True, "msg": "Events have been finilized."}, 200
 
