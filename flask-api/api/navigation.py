@@ -4,7 +4,9 @@ from typing import Tuple
 import requests, json
 import pandas as pd
 
-_gmaps = googlemaps.Client(key='AIzaSyCzqpKMC_ZF2DsuooSnEdMOTFYBjyeFCOw')
+# kenta key AIzaSyDTFzL6u9x1X2sI972pY__SA4x_tOPXXLw
+# seiji key AIzaSyCzqpKMC_ZF2DsuooSnEdMOTFYBjyeFCOw
+_gmaps = googlemaps.Client(key='AIzaSyDTFzL6u9x1X2sI972pY__SA4x_tOPXXLw')
 
 def get_places(coordinates, radius, min_price, max_price, min_rating):
     """
@@ -58,7 +60,7 @@ def optimal_travel_order(bars):
 
     id_list = []
     for bar in bars:
-        list.append(bar['id'])
+        id_list.append(bar.place_id)
 
     origin_ids = '|'.join(map(str, id_list))
     destination_ids = origin_ids
