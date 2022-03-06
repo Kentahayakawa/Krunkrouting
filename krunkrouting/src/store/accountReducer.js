@@ -1,5 +1,5 @@
 // action - state management
-import { ACCOUNT_INITIALIZE, GROUP_INIT, LOGIN, LOGOUT } from './actions';
+import { ACCOUNT_INITIALIZE, GROUP_INIT, LOGIN, LOGOUT, PRICE_FILTER, RATING_FILTER, DISTANCE_FILTER} from './actions';
 
 export const initialState = {
     token: '',
@@ -49,6 +49,32 @@ const accountReducer = (state = initialState, action) => {
                 user: null
             };
         }
+
+        case PRICE_FILTER: {
+            const { minprice, maxprice } = action.payload;
+            return {
+                ...state,
+                minprice,
+                maxprice
+            };
+        }
+
+        case RATING_FILTER: {
+            const { minrating } = action.payload;
+            return {
+                ...state,
+                minrating
+            };
+        }
+
+        case DISTANCE_FILTER: {
+            const { distbias } = action.payload;
+            return {
+                ...state,
+                distbias
+            };
+        }
+
         default: {
             return { ...state };
         }
