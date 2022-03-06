@@ -2,6 +2,7 @@ import googlemaps
 from datetime import datetime
 from typing import Tuple
 import requests, json
+import pandas as pd
 
 _gmaps = googlemaps.Client(key='AIzaSyCzqpKMC_ZF2DsuooSnEdMOTFYBjyeFCOw')
 
@@ -50,7 +51,9 @@ def to_coordinates(address):
     return (result['lat'], result['lng'])
 
 
-def optimal_travel_order(bars): #take output of get_places() as input
+#takes output of get_places() as input, lists bars to hit up in order (finds optimized
+#path using distance matrix)
+def optimal_travel_order(bars): 
     trip_list = []
 
     id_list = []
@@ -58,10 +61,12 @@ def optimal_travel_order(bars): #take output of get_places() as input
         list.append(bar['id'])
 
     origin_ids = '|'.join(map(str, id_list))
-    destination_ids = origin
+    destination_ids = origin_ids
 
+
+    #nothing below this should have any potential bugs
     api_key = 'AIzaSyCzqpKMC_ZF2DsuooSnEdMOTFYBjyeFCOw'
-    url=f"https://maps.googleapis.com/maps/api/distancematrix/json?origins={origin}&destinations={destination}&mode=transit&units=imperial&key={api_key}"
+    url=f"https://maps.googleapis.com/maps/api/distancematrix/json?origins={origin_ids}&destinations={destination_ids}&mode=transit&units=imperial&key={api_key}"
     
     json_reply = requests.get(url).json()
 
@@ -78,10 +83,28 @@ def optimal_travel_order(bars): #take output of get_places() as input
             distances_list.append(float(kms.strip('km')))
         distance_matrix.update({origin: distances_list})
 
-    
+    df = pd.DataFrame(distance_matrix, index=destinations)
+    df.index.name = 'destinations'
 
+    travelled = []
+    travelled.append(destinations[0])
+    hopping_index = 0
+    next_stop = destinations[0]
+    next_hop = 0
+    ctr = 0
 
+    while(ctr < len(origins)-1):
+        min = 10000.0
+        for place in range(0, len(destinations)):
+            if df.iloc[hopping_index][place] < min and hopping_index != place and destinations[place] not in travelled:
+                min = df.iloc[hopping_index][place]
+                next_stop = destinations[place]
+                next_hop = place
+        hopping_index = next_hop
+        travelled.append(next_stop)
+        ctr += 1
 
+    return travelled #maybe fix to return placeIDs, but straight names will work too
 
 
 
