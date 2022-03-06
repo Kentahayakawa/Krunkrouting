@@ -161,10 +161,15 @@ const SearchSection = () => {
             })
             .then(function (response) {
                 if(response.data){
-                    dispatch({
-                        type: SEARCH_RESULTS,
-                        payload: { search_results: response.data}
-                    });
+                    if(response.data.status){
+                        dispatch({type: CLEAR_SEARCH_RESULTS});
+                    }
+                    else{
+                        dispatch({
+                            type: SEARCH_RESULTS,
+                            payload: { search_results: response.data}
+                        });
+                    }
                 }
                 else{
                     dispatch({type: CLEAR_SEARCH_RESULTS});
