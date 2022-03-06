@@ -372,9 +372,12 @@ add_event_model = rest_api.model(
     }
 )
 
-delete_event_model = rest_api.model(
-    'DeleteEventModel',
-    {}
+finalize_event_model = rest_api.model(
+    'FinalizeEventModel',
+    {
+        "num_events": fields.Integer(required=True),
+        "group_id": fields.String(required=True, min_length=1, max_length=32)
+    }
 )
 
 
