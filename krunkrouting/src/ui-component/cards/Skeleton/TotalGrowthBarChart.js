@@ -8,7 +8,7 @@ import Skeleton from '@material-ui/core/Skeleton';
 import { gridSpacing } from '../../../store/constant';
 
 //-----------------------|| SKELETON TOTAL GROWTH BAR CHART ||-----------------------//
-
+//function
 const TotalGrowthBarChart = () => {
     return (
         <Card>
