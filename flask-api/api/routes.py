@@ -358,25 +358,25 @@ get_group_model = rest_api.model(
 
 get_event_model = rest_api.model(
     'GetEventModel',
-    {
-        "event_name": fields.String(required=True, min_length=1, max_length=30)
-        #"time": fields.DateTime(default=datetime.utcnow)
-    }
+    {}
 )
 
 add_event_model = rest_api.model(
     'AddEventModel',
     {
-        "name": fields.String(required=True, min_length=1, max_length=30)
-        #"time": fields.DateTime(default=datetime.utcnow)
+        "name": fields.String(required=True),
+        "rating": fields.Integer(required=True),
+        "price_level": fields.Integer(required=True),
+        "place_id": fields.String(required=True),
+        "group_id": fields.Integer(required=True)
     }
 )
 
 finalize_event_model = rest_api.model(
     'FinalizeEventModel',
     {
-        "num_events": fields.Integer(required=True),
-        "group_id": fields.String(required=True, min_length=1, max_length=32)
+        "num_events": fields.Integer(required=True, description="The number of events that will be added to final schedule."),
+        "group_id": fields.Integer(required=True)
     }
 )
 
@@ -423,5 +423,3 @@ class FinalizeEvent(Resource):
         num_events = req_data.get('num_events')
         Events.finalize_events(group_id=current_user.group_id, num_events=num_events)
         return {"success": True, "msg": "Events have been finilized."}, 200
-
-
