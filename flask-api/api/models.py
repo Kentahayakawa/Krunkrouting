@@ -175,17 +175,18 @@ class JWTTokenBlocklist(db.Model):
 class Events(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(), nullable=False)
-    #origin = db.Column(db.String(), nullable=False)
-    #destination = db.Column(db.String(), nullable=False)
-    #event_ordering = db.Column(db.Integer(), nullable=False)
+    rating = db.Column(db.Integer(), nullable=False)
+    price_level = db.Column(db.Integer(), nullable=False)
+    place_id = db.Column(db.String(32), nullable=False)
+
+    #set after votings are over, use distance matrix
+    event_ordering = db.Column(db.Integer(), nullable=False) 
     
     group_id = db.Column(db.Integer(), db.ForeignKey('groups.id'))
     groups = db.relationship('Groups', backref=db.backref('events', lazy=True), foreign_keys=[group_id])
 
     def __repr__(self) -> str:
         return f"Event {self.id} {self.name}"# {self.time}"
-
-
 
     def save(self):
         db.session.add(self)
@@ -200,7 +201,6 @@ class Events(db.Model):
     def get_by_id(cls, id):
         return cls.query.get_or_404(id)
 
-        
     @classmethod
     def order_events(cls, group_id):
         #modify db entries for all events corresponding to provided group id so that event ordering goes from

@@ -53,20 +53,33 @@ def to_coordinates(address):
 def optimal_travel_order(bars): #take output of get_places() as input
     trip_list = []
 
-    #using placeIDs is perferred over lat/long coordinates (from distance matrix overview)
     id_list = []
     for bar in bars:
         list.append(bar['id'])
 
-    origin = '|'.join(map(str, id_list))
-    destination = origin
+    origin_ids = '|'.join(map(str, id_list))
+    destination_ids = origin
 
     api_key = 'AIzaSyCzqpKMC_ZF2DsuooSnEdMOTFYBjyeFCOw'
-    url=f"https://maps.googleapis.com/maps/api/distancematrix/json?origins={origin}&destinations={destination}&mode=car&key={api_key}"
+    url=f"https://maps.googleapis.com/maps/api/distancematrix/json?origins={origin}&destinations={destination}&mode=transit&units=imperial&key={api_key}"
     
     json_reply = requests.get(url).json()
 
+    origins = json_reply['origin_addresses']
+    destinations = json_reply['destination_addresses']
+
+    distance_matrix = {}
+    for origin in origins:
+        distances_list = []
+        for element in json_reply['rows'][origins.index(origin)]['elements']:
+            kms = element['distance']['text']
+            if "," in kms:
+                kms = kms.replace(",", "")
+            distances_list.append(float(kms.strip('km')))
+        distance_matrix.update({origin: distances_list})
+
     
+
 
 
 

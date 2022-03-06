@@ -308,6 +308,7 @@ class Places(Resource):
             min_rating = args['min_rating'] if args['min_rating'] else 0
         ), 200
 
+
 @rest_api.route('/api/vote')
 class Vote(Resource):
     """
@@ -395,16 +396,24 @@ class AddEvent(Resource):
     def post(self, current_user):
         req_data = request.get_json()
         event_name = req_data.get('name')
+        event_rating = req_data.get('rating')
+        price_level = req_data.get('price_level')
+        place_id = req_data.get('place_id')
 
-        #Maybe set id to google places id
-        new_event = Events(name = event_name, group_id = current_user.group.id)
+        new_event = Events(name = event_name, 
+                        rating = event_rating, 
+                        price_level=price_level, 
+                        place_id=place_id, 
+                        event_ordering = 0,
+                        group_id = current_user.group.id
+        )
         new_event.save()
         return {"success": True, "Added event": new_event.toJSON()}, 200
 
-#bug free finally
-@rest_api.route('/api/events/delete')
-class DeleteEvent(Resource):
 
+#bug free finally
+@rest_api.route('/api/events/finalize')
+class FinalizeEvent(Resource):
     @token_required
     def delete(self, current_user):
         req_data = request.get_json()
