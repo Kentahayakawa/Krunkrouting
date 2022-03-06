@@ -202,10 +202,21 @@ class Events(db.Model):
         return cls.query.get_or_404(id)
 
     @classmethod
-    def order_events(cls, group_id):
+    def order_events(cls, group_id, optimized_order):
         #modify db entries for all events corresponding to provided group id so that event ordering goes from
         # 1 to n by distance
-        pass
+        my_events = db.query(Events).filter(Events.group_id == group_id).all()
+        ctr = 1
+
+        for planned_event in optimized_order:
+            for event in my_events:
+                if event.name == planned_event:
+                    event.event_ordering = ctr
+                    break
+            ctr += 1
+        
+
+
     
     def toJSON(self):
         result = {}
