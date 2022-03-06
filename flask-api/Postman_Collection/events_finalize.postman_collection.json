@@ -1,0 +1,1162 @@
+{
+	"info": {
+		"_postman_id": "e3f67407-1fd8-4102-b072-672e06e0c774",
+		"name": "KrunkRouting",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Register / Login",
+			"item": [
+				{
+					"name": "Register Leader",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"leader\",\r\n    \"password\": \"leader\",\r\n    \"email\": \"leader@krunkrouting.com\"\r\n}"
+						},
+						"url": {
+							"raw": "localhost:5000/api/users/register",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"users",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login Leader",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"postman.setEnvironmentVariable(\"leader-token\", jsonData.token);\r",
+									"postman.setEnvironmentVariable(\"leader-id\", jsonData.user._id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"password\": \"leader\",\r\n    \"email\": \"leader@krunkrouting.com\"\r\n}"
+						},
+						"url": {
+							"raw": "localhost:5000/api/users/login",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"users",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Register Eugene",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"eugene\",\r\n    \"password\": \"eugene\",\r\n    \"email\": \"eugene@krunkrouting.com\"\r\n}"
+						},
+						"url": {
+							"raw": "localhost:5000/api/users/register",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"users",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login Eugene",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"postman.setEnvironmentVariable(\"eugene-token\", jsonData.token);\r",
+									"postman.setEnvironmentVariable(\"eugene-id\", jsonData.user._id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"password\": \"eugene\",\r\n    \"email\": \"eugene@krunkrouting.com\"\r\n}"
+						},
+						"url": {
+							"raw": "localhost:5000/api/users/login",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"users",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logout Eugene",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "authorization",
+								"value": "{{eugene-token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{}"
+						},
+						"url": {
+							"raw": "localhost:5000/api/users/logout",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"users",
+								"logout"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": "",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get user (Leader)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{leader-token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"user_id\": {{leader-id}}\r\n}"
+						},
+						"url": {
+							"raw": "localhost:5000/api/users",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get user (Eugene)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{eugene-token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"user_id\": {{eugene-id}}\r\n}"
+						},
+						"url": {
+							"raw": "localhost:5000/api/users",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"users"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Create / Join Group",
+			"item": [
+				{
+					"name": "Leader Create Group",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"postman.setEnvironmentVariable(\"default-group-code\", jsonData.group.invite_code);\r",
+									"postman.setEnvironmentVariable(\"default-group-id\", jsonData.group._id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{leader-token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{}"
+						},
+						"url": {
+							"raw": "localhost:5000/api/groups/create",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"groups",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Eugene Join Group",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{eugene-token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"invite_code\": \"{{default-group-code}}\"\r\n}"
+						},
+						"url": {
+							"raw": "localhost:5000/api/groups/join",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"groups",
+								"join"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get group",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{leader-token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"group_id\": {{default-group-id}}\r\n}"
+						},
+						"url": {
+							"raw": "localhost:5000/api/groups",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"groups"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Places",
+			"item": [
+				{
+					"name": "(Eugene) Get places near UCLA",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{eugene-token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "localhost:5000/api/places?name=UCLA",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"places"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "UCLA"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "(Eugene) Get places near UCLA",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{eugene-token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "localhost:5000/api/places?name=UCLA",
+									"host": [
+										"localhost"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"places"
+									],
+									"query": [
+										{
+											"key": "name",
+											"value": "UCLA"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Server",
+									"value": "nginx/1.21.6"
+								},
+								{
+									"key": "Date",
+									"value": "Sat, 05 Mar 2022 09:53:37 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Content-Length",
+									"value": "3963"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"id\": \"ChIJG8E_l4O8woARfo9O-8qHCuk\",\n        \"name\": \"Rocco's Tavern\",\n        \"address\": \"1000 Gayley Ave, Los Angeles, CA 90024\",\n        \"lat\": 34.0618939,\n        \"lng\": -118.4476878,\n        \"price_level\": 2,\n        \"rating\": 4.3\n    },\n    {\n        \"id\": \"ChIJS8IpR0K7woARM4y49G_8mJA\",\n        \"name\": \"Mom's Bar\",\n        \"address\": \"12238 Santa Monica Blvd, Los Angeles, CA 90025\",\n        \"lat\": 34.0396361,\n        \"lng\": -118.4649389,\n        \"price_level\": 1,\n        \"rating\": 4.2\n    },\n    {\n        \"id\": \"ChIJ60D_6A67woARz_0TOqYmnYM\",\n        \"name\": \"neat.\",\n        \"address\": \"11780 W Pico Blvd, Los Angeles, CA 90064\",\n        \"lat\": 34.030608,\n        \"lng\": -118.447164,\n        \"price_level\": 2,\n        \"rating\": 4.3\n    },\n    {\n        \"id\": \"ChIJnz0QzDS7woARptBu0k-QJfM\",\n        \"name\": \"The Chestnut Club - Santa Monica Bar - Cocktails\",\n        \"address\": \"1348 14th St, Santa Monica, CA 90404\",\n        \"lat\": 34.0241965,\n        \"lng\": -118.4861021,\n        \"price_level\": 2,\n        \"rating\": 4.4\n    },\n    {\n        \"id\": \"ChIJB3WMZRC7woAR673KEApISfI\",\n        \"name\": \"Thunderbird Bar\",\n        \"address\": \"12217 Wilshire Blvd, Los Angeles, CA 90025\",\n        \"lat\": 34.0433892,\n        \"lng\": -118.4688698,\n        \"price_level\": 2,\n        \"rating\": 4.4\n    },\n    {\n        \"id\": \"ChIJA4_UFq67woARBF0QQlWsA3g\",\n        \"name\": \"Gabes\",\n        \"address\": \"2965 S Sepulveda Blvd, Los Angeles, CA 90064\",\n        \"lat\": 34.027703,\n        \"lng\": -118.4291906,\n        \"price_level\": 1,\n        \"rating\": 4.3\n    },\n    {\n        \"id\": \"ChIJlWoctjS7woARE2BY-SoHors\",\n        \"name\": \"The Room Santa Monica\",\n        \"address\": \"1325 Santa Monica Blvd, Santa Monica, CA 90404\",\n        \"lat\": 34.024002,\n        \"lng\": -118.486164,\n        \"price_level\": 2,\n        \"rating\": 4\n    },\n    {\n        \"id\": \"ChIJWy73kim6woAR7yI8vUXtPcU\",\n        \"name\": \"Rocco's Tavern\",\n        \"address\": \"3843 Main St, Culver City, CA 90232\",\n        \"lat\": 34.0245528,\n        \"lng\": -118.394709,\n        \"price_level\": 2,\n        \"rating\": 4.3\n    },\n    {\n        \"id\": \"ChIJw2u1EXC7woARYtJc_HEDnMQ\",\n        \"name\": \"The Nickel Mine\",\n        \"address\": \"11363 Santa Monica Blvd, Los Angeles, CA 90025\",\n        \"lat\": 34.0460468,\n        \"lng\": -118.4507368,\n        \"price_level\": 2,\n        \"rating\": 4.3\n    },\n    {\n        \"id\": \"ChIJVcXlGE-7woARrpG2U_ImAZ0\",\n        \"name\": \"Sonny McLean's Irish Pub\",\n        \"address\": \"2615 Wilshire Blvd, Santa Monica, CA 90403\",\n        \"lat\": 34.0364965,\n        \"lng\": -118.4771634,\n        \"price_level\": 2,\n        \"rating\": 4.5\n    },\n    {\n        \"id\": \"ChIJcf_yksu7woARLp3dOWEiSt0\",\n        \"name\": \"The Irish Times Pub & Restaurant\",\n        \"address\": \"3267 Motor Ave, Los Angeles, CA 90034\",\n        \"lat\": 34.0296444,\n        \"lng\": -118.4112793,\n        \"price_level\": 1,\n        \"rating\": 4.5\n    },\n    {\n        \"id\": \"ChIJ_XUmuku7woARRQb2ihd3md0\",\n        \"name\": \"Gas Lite\",\n        \"address\": \"2030 Wilshire Blvd, Santa Monica, CA 90403\",\n        \"lat\": 34.0318874,\n        \"lng\": -118.4822486,\n        \"price_level\": 1,\n        \"rating\": 4\n    },\n    {\n        \"id\": \"ChIJmT8ZmMy7woARMrTT1zGLLbg\",\n        \"name\": \"The Garage on Motor Ave\",\n        \"address\": \"3387 Motor Ave, Los Angeles, CA 90034\",\n        \"lat\": 34.0276719,\n        \"lng\": -118.4099436,\n        \"price_level\": 2,\n        \"rating\": 4.3\n    },\n    {\n        \"id\": \"ChIJ5WeOX0m7woARm0VUqRNeUEw\",\n        \"name\": \"O'Briens Irish Pub\",\n        \"address\": \"2226 Wilshire Blvd, Santa Monica, CA 90403\",\n        \"lat\": 34.033164,\n        \"lng\": -118.4806342,\n        \"price_level\": 2,\n        \"rating\": 4.5\n    },\n    {\n        \"id\": \"ChIJE_59cZy7woAR29_vO4-QsEM\",\n        \"name\": \"Byblos Mediterranean Restaurant and Hookah Bar\",\n        \"address\": \"1964 Westwood Blvd, Los Angeles, CA 90025\",\n        \"lat\": 34.0473123,\n        \"lng\": -118.4344924,\n        \"price_level\": 2,\n        \"rating\": 4\n    },\n    {\n        \"id\": \"ChIJ9bElwYO8woARyFBerBC6aRs\",\n        \"name\": \"Barney's Beanery Westwood\",\n        \"address\": \"1037 Broxton Ave, Los Angeles, CA 90024\",\n        \"lat\": 34.0617203,\n        \"lng\": -118.4466525,\n        \"price_level\": 2,\n        \"rating\": 4.2\n    },\n    {\n        \"id\": \"ChIJA_UIdqG-woARGfJUiZu5g2s\",\n        \"name\": \"Rainbow Bar & Grill\",\n        \"address\": \"9015 Sunset Blvd, West Hollywood, CA 90069\",\n        \"lat\": 34.0908758,\n        \"lng\": -118.3882402,\n        \"price_level\": 2,\n        \"rating\": 4.6\n    },\n    {\n        \"id\": \"ChIJ_ca_GCO7woARj63n8uI1Mbk\",\n        \"name\": \"The Daily Pint\",\n        \"address\": \"2310 Pico Blvd, Santa Monica, CA 90405\",\n        \"lat\": 34.0210686,\n        \"lng\": -118.4661255,\n        \"price_level\": 1,\n        \"rating\": 4.5\n    },\n    {\n        \"id\": \"ChIJUwBPyiW6woARabIvmpP3cfY\",\n        \"name\": \"Backstage Bar & Grill\",\n        \"address\": \"10400 Culver Blvd, Culver City, CA 90232\",\n        \"lat\": 34.0162722,\n        \"lng\": -118.4001389,\n        \"price_level\": 1,\n        \"rating\": 4.4\n    },\n    {\n        \"id\": \"ChIJn5S6RQm7woAR3CACQOxKhGA\",\n        \"name\": \"Plan B\",\n        \"address\": \"11637 W Pico Blvd, Los Angeles, CA 90064\",\n        \"lat\": 34.0323971,\n        \"lng\": -118.4449847,\n        \"price_level\": 2,\n        \"rating\": 3.9\n    }\n]"
+						}
+					]
+				},
+				{
+					"name": "Leader Vote 1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{leader-token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"choice\": \"True\",\r\n    \"place_id\": \"ChIJG8E_l4O8woARfo9O-8qHCuk\"\r\n}"
+						},
+						"url": {
+							"raw": "localhost:5000/api/vote",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"vote"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Leader Vote 1 (remove vote)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{leader-token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"choice\": \"False\",\r\n    \"place_id\": \"ChIJG8E_l4O8woARfo9O-8qHCuk\"\r\n}"
+						},
+						"url": {
+							"raw": "localhost:5000/api/vote",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"vote"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Leader Vote 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{leader-token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"choice\": \"True\",\r\n    \"place_id\": \"ChIJS8IpR0K7woARM4y49G_8mJA\"\r\n}"
+						},
+						"url": {
+							"raw": "localhost:5000/api/vote",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"vote"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Leader Vote 2 (remove vote) Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{leader-token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"choice\": \"False\",\r\n    \"place_id\": \"ChIJS8IpR0K7woARM4y49G_8mJA\"\r\n}"
+						},
+						"url": {
+							"raw": "localhost:5000/api/vote",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"vote"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Eugene Vote 1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{eugene-token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"choice\": \"True\",\r\n    \"place_id\": \"ChIJG8E_l4O8woARfo9O-8qHCuk\"\r\n}"
+						},
+						"url": {
+							"raw": "localhost:5000/api/vote",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"vote"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Eugene Vote 1 (remove vote)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{eugene-token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"choice\": \"False\",\r\n    \"place_id\": \"ChIJG8E_l4O8woARfo9O-8qHCuk\"\r\n}"
+						},
+						"url": {
+							"raw": "localhost:5000/api/vote",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"vote"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Eugene Vote 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{eugene-token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"choice\": \"True\",\r\n    \"place_id\": \"ChIJS8IpR0K7woARM4y49G_8mJA\"\r\n}"
+						},
+						"url": {
+							"raw": "localhost:5000/api/vote",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"vote"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Eugene Vote 2 (remove vote)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{eugene-token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"choice\": \"False\",\r\n    \"place_id\": \"ChIJS8IpR0K7woARM4y49G_8mJA\"\r\n}"
+						},
+						"url": {
+							"raw": "localhost:5000/api/vote",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"vote"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Eugene Vote 3",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{eugene-token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"choice\": \"True\",\r\n    \"place_id\": \"ChIJlWoctjS7woARE2BY-SoHors\"\r\n}"
+						},
+						"url": {
+							"raw": "localhost:5000/api/vote",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"vote"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Eugene Vote 3 (remove vote)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{eugene-token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"choice\": \"False\",\r\n    \"place_id\": \"ChIJlWoctjS7woARE2BY-SoHors\"\r\n}"
+						},
+						"url": {
+							"raw": "localhost:5000/api/vote",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"vote"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Events",
+			"item": [
+				{
+					"name": "Add Event 1",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{leader-token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Rocco's Tavern\",\n    \"rating\": 4.3,\n    \"price_level\": 2,\n    \"place_id\": \"ChIJG8E_l4O8woARfo9O-8qHCuk\",\n    \"group_id\": {{default-group-id}}\n}"
+						},
+						"url": {
+							"raw": "localhost:5000/api/events/add",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"events",
+								"add"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Event 2",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{leader-token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Mom's Bar\",\n    \"rating\": 4.2,\n    \"price_level\": 1,\n    \"place_id\": \"ChIJS8IpR0K7woARM4y49G_8mJA\",\n    \"group_id\": {{default-group-id}}\n}"
+						},
+						"url": {
+							"raw": "localhost:5000/api/events/add",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"events",
+								"add"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Event 3",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{leader-token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"The Room Santa Monica\",\n    \"rating\": 4,\n    \"price_level\": 2,\n    \"place_id\": \"ChIJlWoctjS7woARE2BY-SoHors\",\n    \"group_id\": {{default-group-id}}\n}"
+						},
+						"url": {
+							"raw": "localhost:5000/api/events/add",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"events",
+								"add"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Finalize",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{leader-token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"num_events\": 2,\n    \"group_id\": {{default-group-id}}\n}"
+						},
+						"url": {
+							"raw": "localhost:5000/api/events/finalize",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"events",
+								"finalize"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

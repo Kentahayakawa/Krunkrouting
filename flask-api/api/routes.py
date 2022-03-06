@@ -415,13 +415,10 @@ class AddEvent(Resource):
 @rest_api.route('/api/events/finalize')
 class FinalizeEvent(Resource):
     @token_required
-    def delete(self, current_user):
+    def post(self, current_user):
         req_data = request.get_json()
-        to_delete = Events(name = req_data.get('name'), group_id = current_user.group.id)
-        to_delete.delete()
-        return {
-            "success": True,
-            "Deleted event": to_delete.toJSON()
-        }, 200
+        num_events = req_data.get('num_events')
+        Events.finalize_events(group_id=current_user.group_id, num_events=num_events)
+        return {"success": True, "msg": "Events have been finilized."}, 200
 
 
