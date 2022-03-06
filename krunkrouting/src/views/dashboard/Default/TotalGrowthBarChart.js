@@ -18,23 +18,20 @@ import chartData from './chart-data/total-growth-bar-chart';
 
 const status = [
     {
-        value: 'today',
-        label: 'Today'
+        value: 'members',
+        label: 'Members'
     },
     {
-        value: 'month',
-        label: 'This Month'
+        value: 'schedule',
+        label: 'Schedule'
     },
-    {
-        value: 'year',
-        label: 'This Year'
-    }
+
 ];
 
 //-----------------------|| DASHBOARD DEFAULT - TOTAL GROWTH BAR CHART ||-----------------------//
 
 const TotalGrowthBarChart = ({ isLoading }) => {
-    const [value, setValue] = React.useState('today');
+    const [value, setValue] = React.useState('members');
     const theme = useTheme();
 
     const primary = theme.palette.text.primary;
@@ -92,7 +89,10 @@ const TotalGrowthBarChart = ({ isLoading }) => {
                     <Grid container spacing={gridSpacing}>
                         <Grid item xs={12}>
                             <Grid container alignItems="center" justifyContent="space-between">
-                                <Grid item>
+                                
+                                {/* encompasses total growth and number value */}
+                                <Grid item xs={10}>
+                                    {/* changing direction to row makes the number post next to total growth */}
                                     <Grid container direction="column" spacing={1}>
                                         <Grid item>
                                             <Typography variant="subtitle2">Total Growth</Typography>
@@ -102,6 +102,8 @@ const TotalGrowthBarChart = ({ isLoading }) => {
                                         </Grid>
                                     </Grid>
                                 </Grid>
+                                
+                                {/* members/schedule change button thing*/}
                                 <Grid item>
                                     <TextField
                                         id="standard-select-currency"

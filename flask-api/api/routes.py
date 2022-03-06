@@ -2,7 +2,7 @@ from datetime import datetime, timezone, timedelta
 from functools import wraps
 from flask import request
 from flask_restx import Api, Resource, fields, reqparse
-import jwt
+import jwt, json
 
 from .models import *
 from .config import BaseConfig
@@ -51,6 +51,7 @@ join_group_model = rest_api.model(
         "invite_code": fields.String(required=True, min_length=6, max_length=6)
     }
 )
+
 """
 Helper function for JWT token required
 """
@@ -126,7 +127,7 @@ class Register(Resource):
             return {"success": False,
                     "msg": "Email already taken"}, 400
 
-        new_user = Users(username=_username, email=_email)
+        new_user = Users(username=_username.capitalize(), email=_email)
 
         new_user.set_password(_password)
         new_user.save()
@@ -271,11 +272,13 @@ class GetGroup(Resource):
         _group = Groups.get_by_id(req_data.get("group_id"))
         return _group.toJSON(), 200
 
+
 @rest_api.route('/api/places')
 class Places(Resource):
     """
     Get places near a location
     """
+
 
     @token_required
     def get(self, current_user):
@@ -335,4 +338,69 @@ class Vote(Resource):
             return {"success": True, "msg": "Vote removed"}, 200
         else:
             return {"success": False, "msg": "Voting choice incorrectly formatted"}, 400
+
+        return vote.toJSON(), 200
+
+     
+
+
+
+
+
+
+get_group_model = rest_api.model(
+    'GetGroupModel',
+    {
+        "group_id": fields.String(required=True, min_length=1, max_length=32)
+    }
+)
+
+get_event_model = rest_api.model(
+    'GetEventModel',
+    {
+        "event_name": fields.String(required=True, min_length=1, max_length=30)
+        #"time": fields.DateTime(default=datetime.utcnow)
+    }
+)
+
+add_event_model = rest_api.model(
+    'AddEventModel',
+    {
+        "name": fields.String(required=True, min_length=1, max_length=30)
+        #"time": fields.DateTime(default=datetime.utcnow)
+    }
+)
+
+delete_event_model = rest_api.model(
+    'DeleteEventModel',
+    {
+    }
+)
+
+@rest_api.route('/api/events')
+class GetEvents(Resource):
+    def post(self, current_user):
+        return current_user.group.events
+        
+
+
+@rest_api.route('/api/events/add')
+class AddEvent(Resource):
+    def post(self):
+        req_data = request.get_json()
+        name = req_data.get('name')
+        new_event = Events(name)
+        new_event.save()
+        return {"success": True, "event": new_event.toJSON()}, 200
+
+@rest_api.route('/api/events/delete')
+class DeleteEvent(Resource):
+    def delete(self):
+        req_data = request.get_json()
+        to_delete = Events(req_data.get('name'))
+        to_delete.delete()
+        return {
+            "success": True
+        }, 200
+
 

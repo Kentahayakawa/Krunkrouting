@@ -122,6 +122,7 @@ const ProfileSection = () => {
     const theme = useTheme();
     const customization = useSelector((state) => state.customization);
     const account = useSelector((state) => state.account);
+    const username = account && account.user ? account.user.username : "John";
     const dispatcher = useDispatch();
 
     const [sdm, setSdm] = React.useState(true);
@@ -132,7 +133,6 @@ const ProfileSection = () => {
     const [open, setOpen] = React.useState(false);
     const anchorRef = React.useRef(null);
     const handleLogout = () => {
-        console.log(account.token);
         axios
             .post( configData.API_SERVER + 'users/logout', {}, { headers: { Authorization: `${account.token}` } })
             .then(function (response) {
@@ -215,9 +215,9 @@ const ProfileSection = () => {
                                     <CardContent className={classes.cardContent}>
                                         <Grid container direction="column" spacing={0}>
                                             <Grid item className={classes.flex}>
-                                                <Typography variant="h4">Good Morning,</Typography>
+                                                <Typography variant="h4">Hello,</Typography>
                                                 <Typography component="span" variant="h4" className={classes.name}>
-                                                    John
+                                                    {username}
                                                 </Typography>
                                             </Grid>
                                             <Grid item>
