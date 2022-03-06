@@ -18,23 +18,19 @@ import chartData from './chart-data/total-growth-bar-chart';
 
 const status = [
     {
-        value: 'today',
-        label: 'Today'
+        value: 'schedule',
+        label: 'Schedule'
     },
     {
-        value: 'month',
-        label: 'This Month'
-    },
-    {
-        value: 'year',
-        label: 'This Year'
+        value: 'member',
+        label: 'Member'
     }
 ];
 
 //-----------------------|| DASHBOARD DEFAULT - TOTAL GROWTH BAR CHART ||-----------------------//
 
 const TotalGrowthBarChart = ({ isLoading }) => {
-    const [value, setValue] = React.useState('today');
+    const [value, setValue] = React.useState('schedule');
     const theme = useTheme();
 
     const primary = theme.palette.text.primary;
