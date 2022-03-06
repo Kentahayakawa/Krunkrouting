@@ -376,33 +376,43 @@ delete_event_model = rest_api.model(
     {}
 )
 
+
+#only thing that needs attention and revision. Why wont it workkk
 @rest_api.route('/api/events')
 class GetEvents(Resource):
+    @token_required
     def post(self, current_user):
         return {
             "success": True,
-            "Events": current_user.group.events.toJSON()
+            "Events": current_user.group.events
         }, 200
-        
 
 
+#bug free finally
 @rest_api.route('/api/events/add')
 class AddEvent(Resource):
-    def post(self):
+    @token_required
+    def post(self, current_user):
         req_data = request.get_json()
-        name = req_data.get('name')
-        new_event = Events(name)
-        new_event.save()
-        return {"success": True, "event": new_event.toJSON()}, 200
+        event_name = req_data.get('name')
 
+        #Maybe set id to google places id
+        new_event = Events(name = event_name, group_id = current_user.group.id)
+        new_event.save()
+        return {"success": True, "Added event": new_event.toJSON()}, 200
+
+#bug free finally
 @rest_api.route('/api/events/delete')
 class DeleteEvent(Resource):
-    def delete(self):
+
+    @token_required
+    def delete(self, current_user):
         req_data = request.get_json()
-        to_delete = Events(req_data.get('name'))
+        to_delete = Events(name = req_data.get('name'), group_id = current_user.group.id)
         to_delete.delete()
         return {
-            "success": True
+            "success": True,
+            "Deleted event": to_delete.toJSON()
         }, 200
 
 

@@ -1,6 +1,7 @@
 import googlemaps
 from datetime import datetime
 from typing import Tuple
+import requests, json
 
 _gmaps = googlemaps.Client(key='AIzaSyCzqpKMC_ZF2DsuooSnEdMOTFYBjyeFCOw')
 
@@ -47,3 +48,29 @@ def to_coordinates(address):
     """
     result = _gmaps.geocode(address)[0]['geometry']['location']
     return (result['lat'], result['lng'])
+
+
+def optimal_travel_order(bars): #take output of get_places() as input
+    trip_list = []
+
+    #using placeIDs is perferred over lat/long coordinates (from distance matrix overview)
+    id_list = []
+    for bar in bars:
+        list.append(bar['id'])
+
+    origin = '|'.join(map(str, id_list))
+    destination = origin
+
+    api_key = 'AIzaSyCzqpKMC_ZF2DsuooSnEdMOTFYBjyeFCOw'
+    url=f"https://maps.googleapis.com/maps/api/distancematrix/json?origins={origin}&destinations={destination}&mode=car&key={api_key}"
+    
+    json_reply = requests.get(url).json()
+
+    
+
+
+
+
+
+
+

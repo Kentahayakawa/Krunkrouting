@@ -21,6 +21,7 @@ class Users(db.Model):
     group_id = db.Column(db.Integer(), db.ForeignKey('groups.id'))
     group = db.relationship('Groups', backref=db.backref('members', lazy=True), foreign_keys=[group_id])
 
+    
     def __repr__(self):
         return f"User {self.username}"
 
@@ -76,7 +77,7 @@ class Groups(db.Model):
     leader_id = db.Column(db.Integer(), db.ForeignKey('users.id'), nullable=False)
     leader = db.relationship('Users', foreign_keys=[leader_id])
 
-    events = db.relationship('Events', backref="events", lazy='select')
+    #events = db.relationship('Events', backref=db.backref('groups'))
 
     def __init__(self, leader_id):
         self.leader_id = leader_id
@@ -147,6 +148,7 @@ class Votes(db.Model):
         if exists is not None:
             db.session.delete(exists)
             db.session.commit()
+
     
     @classmethod
     def find_vote(cls, user_id, place_id):
@@ -173,23 +175,18 @@ class JWTTokenBlocklist(db.Model):
 class Events(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(), nullable=False)
-    #time = db.Column(db.DateTime(), default=datetime.utcnow)
-
-    #assoc_group_id = db.Column(db.Integer(), db.ForeignKey('groups.id'))
-    #group = db.relationship('Groups', backref=db.backref("events", lazy=True), foreign_keys=[assoc_group_id])
+    #origin = db.Column(db.String(), nullable=False)
+    #destination = db.Column(db.String(), nullable=False)
+    #event_ordering = db.Column(db.Integer(), nullable=False)
     
-    group_id = db.Column(db.Integer(), db.ForeignKey('group.id'))
+    group_id = db.Column(db.Integer(), db.ForeignKey('groups.id'))
+    groups = db.relationship('Groups', backref=db.backref('events', lazy=True), foreign_keys=[group_id])
 
-    
-
-    def __init__(self, event_name):#, event_time):
-        self.name = event_name
-        #self.time = event_time
-        
     def __repr__(self) -> str:
         return f"Event {self.id} {self.name}"# {self.time}"
 
-        
+
+
     def save(self):
         db.session.add(self)
         db.session.commit()
@@ -203,8 +200,15 @@ class Events(db.Model):
     def get_by_id(cls, id):
         return cls.query.get_or_404(id)
 
+        
+    @classmethod
+    def order_events(cls, group_id):
+        #modify db entries for all events corresponding to provided group id so that event ordering goes from
+        # 1 to n by distance
+        pass
+    
     def toJSON(self):
         result = {}
         result['name'] = self.name
-        #result['time'] = self.time
+        result['group_id'] = self.group_id
         return result
