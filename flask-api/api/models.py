@@ -4,6 +4,8 @@ import random
 import string
 from collections import defaultdict
 import json
+from numpy import place
+from sqlalchemy import ForeignKey, null
 
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
@@ -77,11 +79,12 @@ class Groups(db.Model):
     leader_id = db.Column(db.Integer(), db.ForeignKey('users.id'), nullable=False)
     leader = db.relationship('Users', foreign_keys=[leader_id])
 
-    #events = db.relationship('Events', backref=db.backref('groups'))
+    allow_voting = db.Column(db.Boolean())
 
     def __init__(self, leader_id):
         self.leader_id = leader_id
         self.invite_code = self._get_unused_invite_code()
+        self.allow_voting = True
 
     def __repr__(self) -> str:
         return f"Group {self.id} (leader: {self.leader.username})"
@@ -110,11 +113,15 @@ class Groups(db.Model):
     def get_by_invite_code(cls, invite_code):
         return cls.query.filter_by(invite_code=invite_code).first()
 
-    def tallyVotes(self):
+    def _tally_votes(self):
             tally = defaultdict(lambda: 0)
             for vote in self.votes:
                 tally[vote.place_id] += 1
             return {k: v for k, v in sorted(tally.items(), key=lambda item: item[1], reverse=True)}
+
+    def finalize_and_get_event_place_ids(self):
+        self.allow_voting = False
+        return list(self._tally_votes().keys())[:3]
 
     def toJSON(self):
         result = {}
@@ -122,7 +129,7 @@ class Groups(db.Model):
         result['invite_code'] = self.invite_code
         result['leader'] = self.leader.toJSON()
         result['members'] = [member.toJSON() for member in self.members]
-        result['votes'] = self.tallyVotes()
+        result['votes'] = self._tally_votes()
         result['events'] = [event.toJSON() for event in self.events]
         return result
 
@@ -159,6 +166,46 @@ class Votes(db.Model):
     def toJSON(self):
         return {'user_id': self.user_id, 'place_id': self.place_id}
 
+class Places(db.Model):
+    """
+    Just a cache of Google Places API places.
+    """
+    place_id = db.Column(db.String(32), primary_key=True)
+    name = db.Column(db.String(32))
+    address = db.Column(db.String(32))
+    lat = db.Column(db.Float())
+    lng = db.Column(db.Float())
+    price_level = db.Column(db.Integer())
+    rating = db.Column(db.Float())
+
+    def __init__(self, place_id, name, address, lat, lng, price_level, rating):
+        self.place_id = place_id
+        self.name = name
+        self.address = address
+        self.lat = lat
+        self.lng = lng
+        self.price_level = price_level
+        self.rating = rating
+
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def toJSON(self):
+        return {
+            'place_id': self.place_id,
+            'name': self.name,
+            'address': self.address,
+            'lat': self.lat,
+            'lng': self.lng,
+            'price_level': self.price_level,
+            'rating': self.rating
+        }
+
+    @classmethod
+    def get_by_place_id(self, place_id):
+        return db.session.query(Places).filter_by(place_id=place_id).first()
+
 class JWTTokenBlocklist(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     jwt_token = db.Column(db.String(), nullable=False)
@@ -171,20 +218,19 @@ class JWTTokenBlocklist(db.Model):
         db.session.add(self)
         db.session.commit()
 
-
-
 class Events(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
-    name = db.Column(db.String(), nullable=False)
-    rating = db.Column(db.Integer(), nullable=False)
-    price_level = db.Column(db.Integer(), nullable=False)
-    place_id = db.Column(db.Text(), nullable=False)
+    event_ordering = db.Column(db.Integer()) 
 
-    #set after votings are over, use distance matrix
-    event_ordering = db.Column(db.Integer(), nullable=False) 
+    place_id = db.Column(db.String(32), ForeignKey('places.place_id'))
+    place = db.relationship('Places')
     
     group_id = db.Column(db.Integer(), db.ForeignKey('groups.id'))
     groups = db.relationship('Groups', backref=db.backref('events', lazy=True), foreign_keys=[group_id])
+
+    def __init__(self, place_id, group_id):
+        self.place_id = place_id
+        self.group_id = group_id
 
     def __repr__(self) -> str:
         return f"Event {self.id} {self.name}"# {self.time}"
@@ -207,44 +253,20 @@ class Events(db.Model):
     def order_events(cls, group_id, optimized_order):
         #modify db entries for all events corresponding to provided group id so that event ordering goes from
         # 1 to n by distance
-        my_events = db.query(Events).filter(Events.group_id == group_id).all()
+        my_events = db.session.query(Events).filter(Events.group_id == group_id).all()
         ctr = 1
 
         for planned_event in optimized_order:
             for event in my_events:
-                if event.name == planned_event:
+                if event.place.name == planned_event:
                     event.event_ordering = ctr
                     break
             ctr += 1
 
-
-    
-    @classmethod
-    def finalize_events(cls, group_id, num_events):
-        ''' Sort the events by number of votes they received. Keep the first
-            num_events amount of events and remove the rest as they aren't 
-            popular enough to keep.'''
-        group = Groups.get_by_id(group_id)
-        votes = group.tallyVotes()
-        votes = dict(sorted(votes.items(), key=lambda x:x[1]))
-        drop_events = list(votes.keys())
-
-        # Skipping over the most popluar events
-        for i in range(num_events):
-            drop_events.pop()
-        
-        # Then remove the rest
-        for bar in drop_events:
-            cls.delete(bar)
-        
-
     def toJSON(self):
         result = {}
         result['id'] = self.id
-        result['name'] = self.name
-        result['group_id'] = self.group_id
-        result['price_level'] = self.price_level
-        result['place_id'] = self.place_id
+        result['place'] = self.place.toJSON()
         result['event_ordering'] = self.event_ordering
         result['group_id'] = self.group_id
         return result

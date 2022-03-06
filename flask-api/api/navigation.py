@@ -6,7 +6,8 @@ import pandas as pd
 
 # kenta key AIzaSyDTFzL6u9x1X2sI972pY__SA4x_tOPXXLw
 # seiji key AIzaSyCzqpKMC_ZF2DsuooSnEdMOTFYBjyeFCOw
-_gmaps = googlemaps.Client(key='AIzaSyDTFzL6u9x1X2sI972pY__SA4x_tOPXXLw')
+# please use the seiji key because kenta's key doesn't have all the APIs authorized
+_gmaps = googlemaps.Client(key='AIzaSyCzqpKMC_ZF2DsuooSnEdMOTFYBjyeFCOw')
 
 def get_places(coordinates, radius, min_price, max_price, min_rating):
     """
@@ -55,22 +56,24 @@ def to_coordinates(address):
 
 #takes output of get_places() as input, lists bars to hit up in order (finds optimized
 #path using distance matrix)
-def optimal_travel_order(bars): 
-    trip_list = []
+def optimal_travel_order(bars):
 
     id_list = []
     for bar in bars:
-        id_list.append(bar.place_id)
+        id_list.append('place_id:' + bar.place_id)
+
 
     origin_ids = '|'.join(map(str, id_list))
     destination_ids = origin_ids
 
+    print(f'Solving distance matrix for {origin_ids}')
 
-    #nothing below this should have any potential bugs
     api_key = 'AIzaSyCzqpKMC_ZF2DsuooSnEdMOTFYBjyeFCOw'
     url=f"https://maps.googleapis.com/maps/api/distancematrix/json?origins={origin_ids}&destinations={destination_ids}&mode=transit&units=imperial&key={api_key}"
     
     json_reply = requests.get(url).json()
+
+    print(json_reply)
 
     origins = json_reply['origin_addresses']
     destinations = json_reply['destination_addresses']
@@ -107,8 +110,3 @@ def optimal_travel_order(bars):
         ctr += 1
 
     return travelled #maybe fix to return placeIDs, but straight names will work too
-
-
-
-
-
