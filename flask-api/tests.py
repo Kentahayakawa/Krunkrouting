@@ -45,7 +45,7 @@ def test_json_format(client):
 
 #testing registration function
 def test_registration(client):
-    response = client.post('/api/users/register', data = json.dumps{"username": "Bon"})
+    response = client.post('/api/users/register', data = json.dumps({"username": "Bon"}))
     assert response.status_code == 400
     assert not response.json.get("success")
 
