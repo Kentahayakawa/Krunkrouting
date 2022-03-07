@@ -293,7 +293,7 @@ class Events(db.Model):
 
         for planned_event in optimized_order:
             for event in my_events:
-                if event.place.name == planned_event:
+                if (event.place.address + ', USA') == planned_event:
                     event.event_ordering = ctr
                     break
             ctr += 1

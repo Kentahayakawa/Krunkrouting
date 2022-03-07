@@ -425,7 +425,7 @@ class FinalizeGroupVotes(Resource):
             event.save()
         
         ordering = optimal_travel_order(current_user.group.events)
-        Events.order_events(group_id=current_user.group_id, optimized_order=[e.place.name for e in current_user.group.events])
+        Events.order_events(group_id=current_user.group_id, optimized_order=ordering)
         for event in current_user.group.events:
             event.save()
         
