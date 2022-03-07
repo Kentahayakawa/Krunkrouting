@@ -22,9 +22,20 @@ import { GROUP_JOIN} from './../../../store/actions'; // SEARCH_RTL
 // style constant
 const useStyles = makeStyles((theme) => ({
 
-
+    card1: {
+        backgroundColor: theme.palette.secondary.dark,
+        color: '#fff',
+        overflow: 'hidden',
+        position: 'relative',
+    },
+    card2: {
+        backgroundColor: theme.palette.error.dark,
+        color: '#fff',
+        overflow: 'hidden',
+        position: 'relative',
+    },
     card3: {
-        backgroundColor: theme.palette.primary.dark,
+        backgroundColor: theme.palette.warning.dark,
         color: '#fff',
         overflow: 'hidden',
         position: 'relative',
@@ -73,8 +84,8 @@ const useStyles = makeStyles((theme) => ({
     avatar: {
         ...theme.typography.commonAvatar,
         ...theme.typography.largeAvatar,
-        backgroundColor: theme.palette.primary[800],
-        color: '#fff'
+        backgroundColor: theme.palette.warning.light,
+        color: theme.palette.warning.dark
     },
     avatar2: {
         ...theme.typography.commonAvatar,
@@ -202,12 +213,11 @@ const TotalCards = ({ isLoading }) => {
             {isLoading ? (
                 <TotalIncomeCard />
             ) : (
-
-                <Grid container direction = "row" spacing={1}>
-                    
+            
+                <Grid container direction = "row" >
                     {/* //TotalOrderLineChartCard */}
                     <Grid item lg={4} xs={12}>     
-                        <MainCard border={false} className={classes.card3} contentClass={classes.content2}>
+                        <MainCard border={false} className={classes.card1} contentClass={classes.content2}>
                             <Grid container direction="column">
                                 <Grid item sx={{ mb: 0.75 }}>
                                     <Grid container alignItems="center">
@@ -250,7 +260,7 @@ const TotalCards = ({ isLoading }) => {
                                                                 }}
                                                             >
                                                                 <ButtonBase sx={{ borderRadius: '12px' }}>
-                                                                    <Avatar variant="rounded" className={classes.headerAvatar} {...bindToggle(popupState)}>
+                                                                    <Avatar variant="rounded" className={classes.avatar} {...bindToggle(popupState)}>
                                                                         <IconSearch stroke={1.5} size="1rem" />
                                                                     </Avatar>
                                                                 </ButtonBase>
@@ -329,6 +339,7 @@ const TotalCards = ({ isLoading }) => {
                 <Grid item lg={4} xs={12}>     
                     <MainCard border={false} className={classes.card3} contentClass={classes.content2}>
                         <ButtonBase onClick={handleRemove}>
+                        <MainCard className={classes.card2} contentClass={classes.content2}>
                             <List className={classes.padding}>
                                 <ListItem alignItems="center" disableGutters className={classes.padding}>
                                     <ListItemText

@@ -116,39 +116,7 @@ const NavCollapse = ({ menu, level }) => {
 
     return (
         <React.Fragment>
-            <ListItemButton
-                className={level > 1 ? classes.listItemNoBack : classes.listItem}
-                sx={{ borderRadius: customization.borderRadius + 'px' }}
-                selected={selected === menu.id}
-                onClick={handleClick}
-                style={{ paddingLeft: level * 23 + 'px' }}
-            >
-                <ListItemIcon className={menuIconClass}>{menuIcon}</ListItemIcon>
-                <ListItemText
-                    primary={
-                        <Typography variant={selected === menu.id ? 'h5' : 'body1'} color="inherit" className={classes.listItemTypography}>
-                            {menu.title}
-                        </Typography>
-                    }
-                    secondary={
-                        menu.caption && (
-                            <Typography variant="caption" className={classes.subMenuCaption} display="block" gutterBottom>
-                                {menu.caption}
-                            </Typography>
-                        )
-                    }
-                />
-                {open ? (
-                    <IconChevronUp stroke={1.5} size="1rem" className={level > 1 ? classes.collapseIconSub : classes.collapseIcon} />
-                ) : (
-                    <IconChevronDown stroke={1.5} size="1rem" className={level > 1 ? classes.collapseIconSub : classes.collapseIcon} />
-                )}
-            </ListItemButton>
-            <Collapse in={open} timeout="auto" unmountOnExit>
-                <List component="div" disablePadding className={classes.collapseWrapper}>
-                    {menus}
-                </List>
-            </Collapse>
+            
         </React.Fragment>
     );
 };

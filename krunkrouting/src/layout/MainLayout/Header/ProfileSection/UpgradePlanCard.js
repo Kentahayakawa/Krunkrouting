@@ -51,11 +51,7 @@ const UpgradePlanCard = () => {
                         {group_invite_code}
                     </Typography>
                 </Grid>
-                <Grid item xs={12}>
-                    <Stack direction="column" justifyContent="center" align="center">
-                        HELP
-                    </Stack>
-                </Grid>
+                
             </Grid>
         </Card>
     );

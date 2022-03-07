@@ -46,25 +46,9 @@ const NavGroup = ({ item }) => {
 
     return (
         <React.Fragment>
-            <List
-                subheader={
-                    item.title && (
-                        <Typography variant="caption" className={classes.menuCaption} display="block" gutterBottom>
-                            {item.title}
-                            {item.caption && (
-                                <Typography variant="caption" className={classes.subMenuCaption} display="block" gutterBottom>
-                                    {item.caption}
-                                </Typography>
-                            )}
-                        </Typography>
-                    )
-                }
-            >
-                {items}
-            </List>
+           
 
             {/* group divider */}
-            <Divider className={classes.menuDivider} />
         </React.Fragment>
     );
 };
