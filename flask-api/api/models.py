@@ -160,7 +160,7 @@ class Groups(db.Model):
         for k,v in temp.items():
             out[k] = {
                 'num_votes': v,
-                'place': Places.get_by_place_id(k).toJSON()                    
+                'place': Places.get_by_place_id(k).toJSON() if Places.get_by_place_id(k) else None          
             }
         return out
 
@@ -213,7 +213,11 @@ class Votes(db.Model):
         result = {}
         result['user_id'] = self.user_id
         result['place_id'] = self.place_id
-        result['place'] = (Places.get_by_place_id(self.place_id)).toJSON()
+        result['place'] = (
+            (Places.get_by_place_id(self.place_id)).toJSON()
+            if Places.get_by_place_id(self.place_id)
+            else None
+        )
         return result        
 
 class Places(db.Model):
@@ -311,6 +315,14 @@ class Events(db.Model):
 
         for planned_event in optimized_order:
             for event in my_events:
+                if not event.place:
+                    # Stick this event at the front of the list, sure.
+                    # Really only should happen if we are testing, or
+                    # if we added a place via place_id without first
+                    # grabbing it via the search function, causing it to
+                    # not become cached.
+                    event.event_ordering = ctr
+                    break
                 if (event.place.address + ', USA') == planned_event:
                     event.event_ordering = ctr
                     break
@@ -319,7 +331,7 @@ class Events(db.Model):
     def toJSON(self):
         result = {}
         result['id'] = self.id
-        result['place'] = self.place.toJSON()
+        result['place'] = self.place.toJSON() if self.place else None
         result['event_ordering'] = self.event_ordering
         result['group_id'] = self.group_id
         return result
