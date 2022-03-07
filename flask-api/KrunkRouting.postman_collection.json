@@ -93,6 +93,52 @@
 					"response": []
 				},
 				{
+					"name": "Set Leader address",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{leader-token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"address\": \"550 Veteran Avenue, Los Angeles, California\"\r\n}"
+						},
+						"url": {
+							"raw": "localhost:5000/api/users/address",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"users",
+								"address"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Register Eugene",
 					"event": [
 						{
@@ -177,6 +223,52 @@
 					"response": []
 				},
 				{
+					"name": "Set Eugene Address",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{eugene-token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"address\": \"UCLA\"\r\n}"
+						},
+						"url": {
+							"raw": "localhost:5000/api/users/address",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"users",
+								"address"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Get user",
 					"event": [
 						{
@@ -205,7 +297,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"user_id\": {{leader-id}}\r\n}"
+							"raw": ""
 						},
 						"url": {
 							"raw": "localhost:5000/api/users",
@@ -368,21 +460,21 @@
 			]
 		},
 		{
-			"name": "Places",
+			"name": "Places / Voting",
 			"item": [
 				{
-					"name": "(Eugene) Get places near UCLA",
+					"name": "(Leader) Get places near UCLA",
 					"request": {
 						"method": "GET",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "{{eugene-token}}",
+								"value": "{{leader-token}}",
 								"type": "text"
 							}
 						],
 						"url": {
-							"raw": "localhost:5000/api/places?name=UCLA",
+							"raw": "localhost:5000/api/places?name=UCLA&distance_bias=500&min_rating=4.2",
 							"host": [
 								"localhost"
 							],
@@ -395,6 +487,14 @@
 								{
 									"key": "name",
 									"value": "UCLA"
+								},
+								{
+									"key": "distance_bias",
+									"value": "500"
+								},
+								{
+									"key": "min_rating",
+									"value": "4.2"
 								}
 							]
 						}
@@ -430,7 +530,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"place_id\": \"crocodile\"\r\n}"
+							"raw": "{\r\n    \"place_id\": \"ChIJG8E_l4O8woARfo9O-8qHCuk\",\r\n    \"choice\": \"True\"\r\n}"
 						},
 						"url": {
 							"raw": "localhost:5000/api/vote",
@@ -475,7 +575,97 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"place_id\": \"banana\"\r\n}"
+							"raw": "{\r\n    \"place_id\": \"banana\",\r\n    \"choice\": \"True\"\r\n}"
+						},
+						"url": {
+							"raw": "localhost:5000/api/vote",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"vote"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "(Leader) Vote 3",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{leader-token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"place_id\": \"ChIJE_59cZy7woAR29_vO4-QsEM\",\r\n    \"choice\": \"True\"\r\n}"
+						},
+						"url": {
+							"raw": "localhost:5000/api/vote",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"vote"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "(Leader) Vote 4",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{leader-token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"place_id\": \"ChIJG10H9F27woAR5BrG8xgU81M\",\r\n    \"choice\": \"True\"\r\n}"
 						},
 						"url": {
 							"raw": "localhost:5000/api/vote",
@@ -520,7 +710,52 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"place_id\": \"crocodile\"\r\n}"
+							"raw": "{\r\n    \"place_id\": \"ChIJG8E_l4O8woARfo9O-8qHCuk\",\r\n    \"choice\": \"True\"\r\n}"
+						},
+						"url": {
+							"raw": "localhost:5000/api/vote",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"vote"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Finalize votes",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{leader-token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
 						},
 						"url": {
 							"raw": "localhost:5000/api/vote",
@@ -539,49 +774,239 @@
 			]
 		},
 		{
-			"name": "Testing",
-			"event": [
+			"name": "Movement",
+			"item": [
 				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							""
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json",
-						"type": "text"
-					},
-					{
-						"key": "Authorization",
-						"value": "{{leader-token}}",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \r\n}"
-				},
-				"url": {
-					"raw": "localhost:5000/api/testing",
-					"host": [
-						"localhost"
+					"name": "(Leader) move group to next place",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
 					],
-					"port": "5000",
-					"path": [
-						"api",
-						"testing"
-					]
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{leader-token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \r\n}"
+						},
+						"url": {
+							"raw": "localhost:5000/api/groups/move",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"groups",
+								"move"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "(Leader) move to next place",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{leader-token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "localhost:5000/api/events/checkin",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"events",
+								"checkin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "(Eugene) move to next place",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{eugene-token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "localhost:5000/api/events/checkin",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"events",
+								"checkin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "(Leader) get next event",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{leader-token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "localhost:5000/api/events/next",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"events",
+								"next"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "(Eugene) get next event",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{eugene-token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "localhost:5000/api/events/next",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"events",
+								"next"
+							]
+						}
+					},
+					"response": []
 				}
-			},
-			"response": []
+			]
 		}
 	]
 }
