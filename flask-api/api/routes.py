@@ -108,6 +108,18 @@ class GetUser(Resource):
         _user = Users.get_by_id(req_data.get("user_id"))
         return _user.toJSON(), 200
 
+@rest_api.route('/api/users/address')
+class SetAddress(Resource):
+    def post(self, current_user):
+        req_data= request.get_json()
+        _address = req_data.get("address")
+        current_user.set_address(_address)
+        current_user.save()
+        return {
+            "success": True,
+            "address": _address.toJSON()
+        }, 200
+
 @rest_api.route('/api/users/register')
 class Register(Resource):
     """
@@ -429,4 +441,5 @@ class FinalizeGroupVotes(Resource):
         for event in current_user.group.events:
             event.save()
         
-        return {"success": [e.toJSON() for e in current_user.group.events]}, 200
+        return {"success": True,
+                "Final": [e.toJSON() for e in current_user.group.events]}, 200

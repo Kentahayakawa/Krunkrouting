@@ -18,6 +18,7 @@ class Users(db.Model):
     username = db.Column(db.String(32), nullable=False)
     email = db.Column(db.String(64), nullable=False)
     password = db.Column(db.Text())
+    address = db.Column(db.String(32))
     jwt_auth_active = db.Column(db.Boolean())
     date_joined = db.Column(db.DateTime(), default=datetime.utcnow)
     
@@ -31,6 +32,9 @@ class Users(db.Model):
     def save(self):
         db.session.add(self)
         db.session.commit()
+
+    def set_address(self, new_address):
+        self.address = new_address
 
     def set_password(self, password):
         self.password = generate_password_hash(password)
