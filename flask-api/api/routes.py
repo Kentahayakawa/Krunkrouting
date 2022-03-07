@@ -281,7 +281,10 @@ class GetGroup(Resource):
     def post(self, current_user):
         req_data = request.get_json()
         _group = Groups.get_by_id(req_data.get("group_id"))
-        return _group.toJSON(), 200
+        return {
+            'success': True,
+            'group': _group.toJSON()
+        }, 200
 
 
 @rest_api.route('/api/places')

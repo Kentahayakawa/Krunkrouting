@@ -143,6 +143,8 @@ const ProfileSection = () => {
                 } else {
                     console.log('response - ', response.data.msg);
                 }
+                console.log("LOGOUT");
+                console.log(response.data);
             })
             .catch(function (error) {
                 console.log('error - ', error);

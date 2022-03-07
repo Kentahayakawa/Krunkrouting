@@ -31,13 +31,10 @@ const Dashboard = () => {
                     <Grid container spacing={gridSpacing}>
                         <Grid item xs={12}>
                             <Grid container spacing={gridSpacing}>
-                                <Grid item lg={4} md={6} sm={6} xs={12}>
-                                    <EarningCard isLoading={isLoading} />
-                                </Grid>
-                                <Grid item lg={4} md={6} sm={6} xs={12}>
+                                <Grid item lg={6} md={6} sm={6} xs={12}>
                                     <TotalOrderLineChartCard isLoading={isLoading} />
                                 </Grid>
-                                <Grid item lg={4} md={12} sm={12} xs={12}>
+                                <Grid item lg={6} md={12} sm={12} xs={12}>
                                     <Grid container spacing={gridSpacing}>
                                         <Grid item sm={6} xs={12} md={6} lg={12}>
                                             <TotalIncomeDarkCard isLoading={isLoading} />
@@ -51,11 +48,8 @@ const Dashboard = () => {
                         </Grid>
                         <Grid item xs={12}>
                             <Grid container spacing={gridSpacing}>
-                                <Grid item xs={12} md={8}>
+                                <Grid item xs={12} md={12}>
                                     <TotalGrowthBarChart isLoading={isLoading} />
-                                </Grid>
-                                <Grid item xs={12} md={4}>
-                                    <PopularCard isLoading={isLoading} />
                                 </Grid>
                             </Grid>
                         </Grid>
@@ -66,24 +60,21 @@ const Dashboard = () => {
     }
     return (
         <Grid container justifyContent="flex-end" direction="row" spacing={gridSpacing}>
-            <Grid item xs={4}>
+            <Grid item xs={12} lg={4}>
                 <Grid container>
                     <Grid item xs={12}>
                         <SearchResultsCard isLoading={isLoading} />
                     </Grid>
                 </Grid>
             </Grid>
-            <Grid item xs={8}>
+            <Grid item xs={12} lg={8}>
                 <Grid container spacing={gridSpacing}>
                     <Grid item xs={12}>
                         <Grid container spacing={gridSpacing}>
-                            <Grid item lg={4} md={6} sm={6} xs={12}>
-                                <EarningCard isLoading={isLoading} />
-                            </Grid>
-                            <Grid item lg={4} md={6} sm={6} xs={12}>
+                            <Grid item lg={6} md={6} sm={6} xs={12}>
                                 <TotalOrderLineChartCard isLoading={isLoading} />
                             </Grid>
-                            <Grid item lg={4} md={12} sm={12} xs={12}>
+                            <Grid item lg={6} md={12} sm={12} xs={12}>
                                 <Grid container spacing={gridSpacing}>
                                     <Grid item sm={6} xs={12} md={6} lg={12}>
                                         <TotalIncomeDarkCard isLoading={isLoading} />
@@ -97,11 +88,8 @@ const Dashboard = () => {
                     </Grid>
                     <Grid item xs={12}>
                         <Grid container spacing={gridSpacing}>
-                            <Grid item xs={12} md={8}>
+                            <Grid item xs={12} md={12}>
                                 <TotalGrowthBarChart isLoading={isLoading} />
-                            </Grid>
-                            <Grid item xs={12} md={4}>
-                                <PopularCard isLoading={isLoading} />
                             </Grid>
                         </Grid>
                     </Grid>
