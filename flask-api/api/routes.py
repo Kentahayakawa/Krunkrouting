@@ -310,15 +310,16 @@ class NearbyPlaces(Resource):
 
         for place in places:
             # Add to the cache
-            place_sql = Places(
-                place['id'],
-                place['name'],
-                place['address'],
-                place['lat'],
-                place['lng'],
-                place['price_level'],
-                place['rating']
-            )
+            if not Places.get_by_place_id(place['id']):
+                place_sql = Places( 
+                    place['id'],
+                    place['name'],
+                    place['address'],
+                    place['lat'],
+                    place['lng'],
+                    place['price_level'],
+                    place['rating']
+                )
             place_sql.save()
         
         return [Places.get_by_place_id(place['id']).toJSON() for place in places], 200
@@ -402,14 +403,13 @@ class FinalizeGroupVotes(Resource):
         if current_user.id != current_user.group.leader.id:
             # Only the leader can finalize a group's votes.
             return {"success": False, "reason": "Must be leader to finalize group"}, 200
-        
         event_place_ids = current_user.group.finalize_and_get_event_place_ids()
         current_user.group.save()
         for place_id in event_place_ids:
             event = Events(place_id, current_user.group.id)
             event.save()
         
-        # ordering = optimal_travel_order(current_user.group.events)
+        ordering = optimal_travel_order(current_user.group.events)
         Events.order_events(group_id=current_user.group_id, optimized_order=[e.place.name for e in current_user.group.events])
         for event in current_user.group.events:
             event.save()

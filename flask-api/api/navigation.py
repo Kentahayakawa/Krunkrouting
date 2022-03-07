@@ -61,32 +61,37 @@ def optimal_travel_order(bars):
     id_list = []
     for bar in bars:
         id_list.append('place_id:' + bar.place_id)
+        print(bar.place_id)
 
 
     origin_ids = '|'.join(map(str, id_list))
     destination_ids = origin_ids
-
-    print(f'Solving distance matrix for {origin_ids}')
 
     api_key = 'AIzaSyCzqpKMC_ZF2DsuooSnEdMOTFYBjyeFCOw'
     url=f"https://maps.googleapis.com/maps/api/distancematrix/json?origins={origin_ids}&destinations={destination_ids}&mode=transit&units=imperial&key={api_key}"
     
     json_reply = requests.get(url).json()
 
-    print(json_reply)
 
     origins = json_reply['origin_addresses']
     destinations = json_reply['destination_addresses']
 
     distance_matrix = {}
-    for origin in origins:
+    for i, origin in enumerate(origins):
         distances_list = []
-        for element in json_reply['rows'][origins.index(origin)]['elements']:
-            kms = element['distance']['text']
-            if "," in kms:
-                kms = kms.replace(",", "")
-            distances_list.append(float(kms.strip('km')))
-        distance_matrix.update({origin: distances_list})
+        for element in json_reply['rows'][i]['elements']:
+            if element['status'] == 'ZERO_RESULTS':
+                distances_list.append(0)
+                continue
+            
+            distance = element['distance']['text']
+            if 'mi' in distance:
+                distance = distance.replace(",", "").replace('mi', '').strip()
+                distances_list.append(float(distance))
+            elif 'ft' in distance:
+                distance = distance.replace(",", "").replace('ft', '').strip()
+                distances_list.append(float(distance)/5280)
+        distance_matrix[origin] = distances_list
 
     df = pd.DataFrame(distance_matrix, index=destinations)
     df.index.name = 'destinations'
@@ -109,4 +114,4 @@ def optimal_travel_order(bars):
         travelled.append(next_stop)
         ctr += 1
 
-    return travelled #maybe fix to return placeIDs, but straight names will work too
+    return travelled 

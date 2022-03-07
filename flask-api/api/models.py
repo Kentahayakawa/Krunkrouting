@@ -114,10 +114,10 @@ class Groups(db.Model):
         return cls.query.filter_by(invite_code=invite_code).first()
 
     def _tally_votes(self):
-            tally = defaultdict(lambda: 0)
-            for vote in self.votes:
-                tally[vote.place_id] += 1
-            return {k: v for k, v in sorted(tally.items(), key=lambda item: item[1], reverse=True)}
+        tally = defaultdict(lambda: 0)
+        for vote in self.votes:
+            tally[vote.place_id] += 1
+        return {k: v for k, v in sorted(tally.items(), key=lambda item: item[1], reverse=True)}
 
     def finalize_and_get_event_place_ids(self):
         self.allow_voting = False
