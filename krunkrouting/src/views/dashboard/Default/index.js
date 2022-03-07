@@ -59,14 +59,14 @@ const Dashboard = () => {
             </Grid>
             <Grid item xs={12} lg={8}>
                 <Grid container direction="column" spacing={gridSpacing}>
-                    <Grid item xs={12}>
+                    <Grid item xs={6}>
                         <Grid container spacing={gridSpacing}>
                             <Grid item lg={12} md={12} sm={12} xs={12}>
                                 <TotalCards isLoading={isLoading} />
                             </Grid>
                         </Grid>
                     </Grid>
-                    <Grid item xs={12}>
+                    <Grid item xs={6}>
                         <Grid container direction="row" spacing={gridSpacing}>
                             <Grid item xs={12} md={6}>
                                 <BarListCard isLoading={isLoading} />
