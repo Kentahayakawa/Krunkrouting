@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 
 // material-ui
@@ -68,6 +68,31 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
+const IndividualFinalScheduleElement = ({ isLoading, bar_id, bar_name, bar_address}) => {
+
+    return (
+        <Grid container direction="row" spacing={3} alignItems="center" justifyContent="space-between">
+            <Grid item xs={12} lg={6}>
+                <Grid container direction="column">
+                    {/* <Grid container direction="column" spacing={1} > */}
+                        <Grid item>
+                            <Typography variant="h4" color="inherit">
+                                {bar_name}
+                            </Typography>
+                        {/* </Grid> */}
+                    </Grid>
+                    <Grid item>
+                            <Typography variant="subtitle1" color="inherit">
+                                {bar_address}
+                            </Typography>
+                        {/* </Grid> */}
+                    </Grid>
+                </Grid>
+            </Grid>
+        </Grid>
+    );
+
+};
 
 const IndividualBarElement = ({ isLoading, bar_id, bar_name, bar_address, bar_rating, n_reviews, price_filter, n_votes}) => {
 
@@ -222,6 +247,58 @@ const BarListCard = ({ isLoading }) => {
     const classes = useStyles();
     const account = useSelector((state) => state.account);
     const [barList, setBarList] = React.useState([]);
+    const dispatch = useDispatch();
+    const shouldRender = (account && account.final_schedule && account.final_schedule.length !==0)? !isLoading: 0 
+    console.log(shouldRender);
+    console.log("FETCHED final_schedules")
+    console.log(account.final_schedule);
+
+    if(shouldRender){
+        return (
+            <React.Fragment>
+                {isLoading ? (
+                    <SkeletonPopularCard />
+                ) : (
+                    <MainCard content={false}>
+                        <CardContent>
+                            <Grid container spacing={gridSpacing}>
+                                <Grid item xs={12}>
+                                    <Grid container alignContent="center" justifyContent="space-between">
+                                        <Grid item>
+                                            <Typography variant="h2">The final schedule</Typography>
+                                        </Grid>
+                                        <Grid item>
+                                        <RefreshIcon
+                                                className={classes.primaryLight}
+                                                aria-controls="menu-popular-card"
+                                                aria-haspopup="true"
+                                                onClick={handleBarList}
+                                            />
+                                        </Grid>
+                                    </Grid>
+                                </Grid>
+                                {/* <Grid item xs={12} sx={{ pt: '16px !important' }}>
+                                    <BajajAreaChartCard />
+                                </Grid> */}
+                                <Grid item xs={12}>
+                                    {account.final_schedule.map((result) => (
+                                        <SubCard>
+                                            <IndividualFinalScheduleElement
+                                                key={result.bar_id}
+                                                bar_id={result.bar_id}
+                                                bar_name={result.bar_name}
+                                                bar_address={result.bar_address}
+                                            />
+                                        </SubCard>
+                                    ))}
+                                </Grid>
+                            </Grid>
+                        </CardContent>
+                    </MainCard>
+                )}
+            </React.Fragment>
+        );
+    }
 
     return (
         <React.Fragment>

@@ -592,4 +592,3 @@ class GetNextEvent(Resource):
                 'end_place': None,
                 'end_coords': None
             }, 200
-            
