@@ -29,7 +29,7 @@ import axios from 'axios';
 // project imports
 import useScriptRef from '../../../../hooks/useScriptRef';
 import AnimateButton from '../../../../ui-component/extended/AnimateButton';
-import { ACCOUNT_INITIALIZE, GROUP_INIT } from './../../../../store/actions';
+import { ACCOUNT_INITIALIZE, INVITE_CODE } from './../../../../store/actions';
 
 // assets
 import Visibility from '@material-ui/icons/Visibility';
@@ -116,51 +116,37 @@ const RestLogin = (props, { ...others }) => {
                             })
                             .then(function (response) {
                                 if (response.data.success) {
-                                    console.log(response.data);
                                     dispatcher({
                                         type: ACCOUNT_INITIALIZE,
                                         payload: { isLoggedIn: true, user: response.data.user, token: response.data.token }
                                     });
                                     token = response.data.token;
-                                    
                                     if (scriptedRef.current) {
                                         setStatus({ success: true });
                                         setSubmitting(false);
                                     }
+                                    console.log("LOGIN");
+                                    console.log(response.data);
                                     
-                                    try {
-                                        axios
-                                            .post( configData.API_SERVER + 'groups/create', {}, { headers: { Authorization: `${token}` } })
-                                            .then(function (response2) {
-                                                if (response2.data.success) {
-                                                    console.log(response2.data);
-                                                    dispatcher({
-                                                        type: GROUP_INIT,
-                                                        payload: { group_invite_code: response2.data.group.invite_code}
-                                                    });
-                                                    if (scriptedRef2.current) {
-                                                        setStatus({ success: true });
-                                                        setSubmitting(false);
-                                                    }
-                                                } else {
-                                                    setStatus({ success: false });
-                                                    setErrors({ submit: response2.data.msg });
-                                                    setSubmitting(false);
-                                                }
-                                            })
-                                            .catch(function (error2) {
-                                                setStatus({ success: false });
-                                                setErrors({ submit: error2.response2.data.msg });
-                                                setSubmitting(false);
-                                            });
-                                    } catch (err) {
-                                        console.error(err);
-                                        if (scriptedRef2.current) {
+                                    axios
+                                        .post(configData.API_SERVER + 'groups', {"group_id": response.data.user.group_id}, {headers: {Authorization: `${response.data.token}`}} 
+                                        )
+                                        .then(function (response2) {
+                                            if (response2.data.success) {
+                                                dispatcher({
+                                                    type: INVITE_CODE,
+                                                    payload: { group_invite_code: response2.data.group.invite_code }
+                                                });
+                                                console.log("GET GROUP");
+                                                console.log(response2.data);
+                                            }
+                                        }).catch(function (error) {
                                             setStatus({ success: false });
-                                            setErrors({ submit: err.message });
+                                            setErrors({ submit: error.response.data.msg });
                                             setSubmitting(false);
-                                        }
-                                    }
+                                        });
+                                    
+                                    
                                     //End of group creation
                                     //Continuation of ACCOUNT_INIT
                                 } else {

@@ -1,5 +1,5 @@
 // action - state management
-import { ACCOUNT_INITIALIZE, GROUP_INIT, LOGIN, LOGOUT, PRICE_FILTER, RATING_FILTER, DISTANCE_FILTER, SEARCH_RESULTS, CLEAR_SEARCH_RESULTS} from './actions';
+import { ACCOUNT_INITIALIZE, GROUP_INIT, LOGIN, INVITE_CODE, LOGOUT, PRICE_FILTER, RATING_FILTER, DISTANCE_FILTER, SEARCH_RESULTS, CLEAR_SEARCH_RESULTS} from './actions';
 
 export const initialState = {
     token: '',
@@ -34,14 +34,6 @@ const accountReducer = (state = initialState, action) => {
             };
         }
 
-        case GROUP_INIT: {
-            const { group_invite_code } = action.payload;
-            return{
-                ...state,
-                group_invite_code
-            };
-        }
-
         case LOGOUT: {
             return {
                 ...state,
@@ -65,6 +57,14 @@ const accountReducer = (state = initialState, action) => {
             return {
                 ...state,
                 minrating
+            };
+        }
+
+        case INVITE_CODE:{
+            const {group_invite_code} = action.payload;
+            return {
+                ...state,
+                group_invite_code
             };
         }
 

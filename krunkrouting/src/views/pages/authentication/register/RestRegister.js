@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { Link, useHistory } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 
 import configData from '../../../../config';
 
@@ -31,6 +32,7 @@ import axios from 'axios';
 import useScriptRef from '../../../../hooks/useScriptRef';
 import AnimateButton from './../../../../ui-component/extended/AnimateButton';
 import { strengthColor, strengthIndicator } from '../../../../utils/password-strength';
+import { GROUP_INIT } from './../../../../store/actions';
 
 // assets
 import Visibility from '@material-ui/icons/Visibility';
@@ -80,6 +82,7 @@ const useStyles = makeStyles((theme) => ({
 const RestRegister = ({ ...others }) => {
     const classes = useStyles();
     let history = useHistory();
+    const dispatcher = useDispatch();
     const scriptedRef = useScriptRef();
     const matchDownSM = useMediaQuery((theme) => theme.breakpoints.down('sm'));
     const [showPassword, setShowPassword] = React.useState(false);
@@ -136,6 +139,8 @@ const RestRegister = ({ ...others }) => {
                                     setErrors({ submit: response.data.msg });
                                     setSubmitting(false);
                                 }
+                                console.log("REGISTER");
+                                console.log(response.data);
                             })
                             .catch(function (error) {
                                 setStatus({ success: false });
