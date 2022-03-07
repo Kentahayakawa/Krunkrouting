@@ -134,18 +134,18 @@ class Groups(db.Model):
         return cls.query.filter_by(invite_code=invite_code).first()
 
     def _tally_votes(self):
-            tally = defaultdict(lambda: 0)
-            for vote in self.votes:
-                tally[vote.place_id] += 1
+        tally = defaultdict(lambda: 0)
+        for vote in self.votes:
+            tally[vote.place_id] += 1
 
-            temp = {k: v for k, v in sorted(tally.items(), key=lambda item: item[1], reverse=True)}
-            out = {}
-            for k,v in temp.items():
-                out[k] = {
-                    'num_votes': v,
-                    'place': Places.get_by_place_id(k).toJSON()                    
-                }
-            return out
+        temp = {k: v for k, v in sorted(tally.items(), key=lambda item: item[1], reverse=True)}
+        out = {}
+        for k,v in temp.items():
+            out[k] = {
+                'num_votes': v,
+                'place': Places.get_by_place_id(k).toJSON()                    
+            }
+        return out
 
     def finalize_and_get_event_place_ids(self):
         self.allow_voting = False
@@ -293,7 +293,7 @@ class Events(db.Model):
 
         for planned_event in optimized_order:
             for event in my_events:
-                if event.place.name == planned_event:
+                if (event.place.address + ', USA') == planned_event:
                     event.event_ordering = ctr
                     break
             ctr += 1
