@@ -110,17 +110,17 @@ const IndividualSearchElement = ({ isLoading, bar_id, bar_name, bar_address, bar
                     </Grid>
                     <Grid item>
                         <Grid container direction="row" justifyContent="flex-start" spacing={1}>
-                            <Grid item xs={1.5} justifyContent="center">
+                            <Grid item lg={1.5} xs={1.5} justifyContent="center">
                                 <Typography variant="h5" color="inherit">
                                     {bar_rating}
                                 </Typography>
                             </Grid>
-                            <Grid item xs={5} justifyContent="center">
+                            <Grid item lg={5} xs={7} justifyContent="center">
                                 <Typography variant="subtitle2" color="inherit">
                                     <Rating name="read-only" value={bar_rating} readOnly precision={0.25} size="small"/>
                                 </Typography>
                             </Grid>
-                            <Grid item xs={1} justifyContent="center">
+                            <Grid item lg={1} xs={1} justifyContent="center">
                                 <Typography variant="h5" color="inherit">
                                     ({n_reviews})
                                 </Typography>
