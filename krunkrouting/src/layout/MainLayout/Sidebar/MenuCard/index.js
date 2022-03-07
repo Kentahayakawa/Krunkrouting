@@ -60,35 +60,7 @@ const UpgradePlanCard = () => {
 
     return (
         <Card className={classes.card}>
-            <CardContent>
-                <Grid container direction="column" spacing={2}>
-                    <Grid item>
-                        <Typography variant="h4">
-                            React Flask Starter
-                        </Typography>
-                    </Grid>
-                    <Grid item>
-                        <Typography variant="subtitle2" className={classes.tagLine}>
-                            Open-source Seed Project.
-                        </Typography>
-                    </Grid>
-                    <Grid item>
-                        <Stack direction="row">
-                            <AnimateButton>
-                                <Button
-                                    component={Link}
-                                    href="https://appseed.us/apps/react"
-                                    target="_blank"
-                                    variant="contained"
-                                    className={classes.button}
-                                >
-                                    More Starters
-                                </Button>
-                            </AnimateButton>
-                        </Stack>
-                    </Grid>
-                </Grid>
-            </CardContent>
+
         </Card>
     );
 };

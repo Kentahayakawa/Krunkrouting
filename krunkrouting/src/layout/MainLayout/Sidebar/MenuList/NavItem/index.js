@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/styles';
 import { Avatar, Chip, ListItemIcon, ListItemText, Typography, useMediaQuery } from '@material-ui/core';
 import ListItemButton from '@material-ui/core/ListItemButton';
-
+import { Grid } from '@material-ui/core';
 // project imports
 import { MENU_OPEN, SET_MENU } from '../../../../../store/actions';
 
@@ -96,41 +96,7 @@ const NavItem = ({ item, level }) => {
     }, []);
 
     return (
-        <ListItemButton
-            {...listItemProps}
-            disabled={item.disabled}
-            className={level > 1 ? classes.listItemNoBack : classes.listItem}
-            sx={{ borderRadius: customization.borderRadius + 'px' }}
-            selected={customization.isOpen.findIndex((id) => id === item.id) > -1}
-            onClick={() => itemHandler(item.id)}
-            target={itemTarget}
-            style={{ paddingLeft: level * 23 + 'px' }}
-        >
-            <ListItemIcon className={itemIconClass}>{itemIcon}</ListItemIcon>
-            <ListItemText
-                primary={
-                    <Typography variant={customization.isOpen.findIndex((id) => id === item.id) > -1 ? 'h5' : 'body1'} color="inherit">
-                        {item.title}
-                    </Typography>
-                }
-                secondary={
-                    item.caption && (
-                        <Typography variant="caption" className={classes.subMenuCaption} display="block" gutterBottom>
-                            {item.caption}
-                        </Typography>
-                    )
-                }
-            />
-            {item.chip && (
-                <Chip
-                    color={item.chip.color}
-                    variant={item.chip.variant}
-                    size={item.chip.size}
-                    label={item.chip.label}
-                    avatar={item.chip.avatar && <Avatar>{item.chip.avatar}</Avatar>}
-                />
-            )}
-        </ListItemButton>
+       <Grid item></Grid>
     );
 };
 
