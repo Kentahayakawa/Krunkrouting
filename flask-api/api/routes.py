@@ -11,48 +11,6 @@ from .navigation import *
 rest_api = Api(version="1.0", title="Users API")
 
 """
-Flask-Restx models for api request and response data
-"""
-
-signup_model = rest_api.model(
-    'SignUpModel',
-    {
-        "username": fields.String(required=True, min_length=2, max_length=32),
-        "email": fields.String(required=True, min_length=4, max_length=64),
-        "password": fields.String(required=True, min_length=4, max_length=16)
-    }
-)
-
-login_model = rest_api.model(
-    'LoginModel',
-    {
-        "email": fields.String(required=True, min_length=4, max_length=64),
-        "password": fields.String(required=True, min_length=4, max_length=16)
-    }
-)
-
-user_edit_model = rest_api.model(
-    'UserEditModel',
-    {
-        "userID": fields.String(required=True, min_length=1, max_length=32),
-        "username": fields.String(required=True, min_length=2, max_length=32),
-        "email": fields.String(required=True, min_length=4, max_length=64)
-    }
-)
-
-create_group_model = rest_api.model(
-    'CreateGroupModel',
-    {}
-)
-
-join_group_model = rest_api.model(
-    'JoinGroupModel',
-    {
-        "invite_code": fields.String(required=True, min_length=6, max_length=6)
-    }
-)
-
-"""
 Helper function for JWT token required
 """
 
@@ -96,6 +54,12 @@ def token_required(f):
 Flask-Restx routes
 """
 
+GetUserModel = rest_api.model(
+    'GetUserModel',
+    {
+        "user_id": fields.String(required=True, min_length=1, max_length=32)
+    }
+)
 @rest_api.route('/api/users')
 class GetUser(Resource):
     """
@@ -108,6 +72,11 @@ class GetUser(Resource):
         _user = Users.get_by_id(req_data.get("user_id"))
         return _user.toJSON(), 200
 
+AddressModel = rest_api.model(
+    'AddressModel',
+    {
+    }
+)
 @rest_api.route('/api/users/address')
 class SetUserAddress(Resource):
     """
@@ -125,13 +94,21 @@ class SetUserAddress(Resource):
             "user": current_user.toJSON()
         }, 200
 
+RegisterModel = rest_api.model(
+    'RegisterModel',
+    {
+        "username": fields.String(required=True, min_length=2, max_length=32),
+        "email": fields.String(required=True, min_length=4, max_length=64),
+        "password": fields.String(required=True, min_length=4, max_length=16)
+    }
+)
 @rest_api.route('/api/users/register')
 class Register(Resource):
     """
     Creates a new user by taking 'signup_model' input
     """
 
-    @rest_api.expect(signup_model, validate=True)
+    @rest_api.expect(RegisterModel, validate=True)
     def post(self):
         req_data = request.get_json()
 
@@ -159,7 +136,13 @@ class Register(Resource):
                 "group_code": new_group.invite_code,
                 "msg": "The user was successfully registered"}, 200
 
-
+login_model = rest_api.model(
+    'LoginModel',
+    {
+        "email": fields.String(required=True, min_length=4, max_length=64),
+        "password": fields.String(required=True, min_length=4, max_length=16)
+    }
+)
 @rest_api.route('/api/users/login')
 class Login(Resource):
     """
@@ -193,7 +176,14 @@ class Login(Resource):
                 "token": token,
                 "user": user_exists.toJSON()}, 200
 
-
+user_edit_model = rest_api.model(
+    'UserEditModel',
+    {
+        "userID": fields.String(required=True, min_length=1, max_length=32),
+        "username": fields.String(required=True, min_length=2, max_length=32),
+        "email": fields.String(required=True, min_length=4, max_length=64)
+    }
+)
 @rest_api.route('/api/users/edit')
 class EditUser(Resource):
     """
@@ -218,7 +208,11 @@ class EditUser(Resource):
 
         return {"success": True}, 200
 
-
+logoutUserModel = rest_api.model(
+    'LogoutUserModel',
+    {
+    }
+)
 @rest_api.route('/api/users/logout')
 class LogoutUser(Resource):
     """
@@ -237,6 +231,10 @@ class LogoutUser(Resource):
 
         return {"success": True}, 200
 
+create_group_model = rest_api.model(
+    'CreateGroupModel',
+    {}
+)
 @rest_api.route('/api/groups/create')
 class CreateGroup(Resource):
     """
@@ -259,6 +257,12 @@ class CreateGroup(Resource):
             "group": new_group.toJSON()
         }, 200
 
+join_group_model = rest_api.model(
+    'JoinGroupModel',
+    {
+        "invite_code": fields.String(required=True, min_length=6, max_length=6)
+    }
+)
 @rest_api.route('/api/groups/join')
 class JoinGroup(Resource):
     """
@@ -288,6 +292,12 @@ class JoinGroup(Resource):
             'group': _group.toJSON()
         }, 200
 
+join_group_model = rest_api.model(
+    'GetGroupModel',
+    {
+        "group_id": fields.String(required=True, min_length=1, max_length=32)
+    }
+)
 @rest_api.route('/api/groups')
 class GetGroup(Resource):
     """
@@ -303,6 +313,11 @@ class GetGroup(Resource):
             'group': _group.toJSON()
         }, 200
 
+move_group_model = rest_api.model(
+    'MoveGroupToNextEventModel',
+    {
+    }
+)
 @rest_api.route('/api/groups/move')
 class MoveGroup(Resource):
     """
@@ -328,6 +343,18 @@ class MoveGroup(Resource):
                 'reason': 'ALREADY_AT_LAST_EVENT'
             }, 200
 
+nearby_places_model = rest_api.model(
+    'GetNearbyPlacesModel',
+    {
+        "name": fields.String(required=True, min_length=1, max_length=32),
+        "lat": fields.String(required=True, min_length=1, max_length=32),
+        "lng": fields.String(required=True, min_length=1, max_length=32),
+        "distance_bias": fields.String(required=True, min_length=1, max_length=32),
+        "min_price": fields.String(required=True, min_length=1, max_length=32),
+        "max_price": fields.String(required=True, min_length=1, max_length=32),
+        "min_rating": fields.String(required=True, min_length=1, max_length=32),
+    }
+)
 @rest_api.route('/api/places')
 class NearbyPlaces(Resource):
     """
@@ -380,6 +407,13 @@ class NearbyPlaces(Resource):
         
         return [Places.get_by_place_id(place['id']).toJSON() for place in places], 200
 
+nearby_places_model = rest_api.model(
+    'CastVote',
+    {
+        "place_id": fields.String(required=True, min_length=1, max_length=32),
+        "choice": fields.String(required=True, min_length=1, max_length=32)
+    }
+)
 @rest_api.route('/api/vote')
 class Vote(Resource):
     """

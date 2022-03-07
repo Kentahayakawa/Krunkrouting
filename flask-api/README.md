@@ -10,4 +10,4 @@ CTRL+C out of Docker and then re-run `docker up --build`. This will re-load the 
 
 ## Testing
 
-There are some tests in `tests.py`. Additionally, there is a Postman collection called `KrunkRouting.postman_collection.json`, which you can load into Postman and then test the various API endpoints there.
+There are some tests in `tests.py`, which you can run with `python -m pytest tests.py`, and they also get run automatically whenever you push to origin. Additionally, there is a Postman collection called `KrunkRouting.postman_collection.json`, which you can load into Postman and then test the various API endpoints there.
