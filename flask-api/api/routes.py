@@ -109,15 +109,20 @@ class GetUser(Resource):
         return _user.toJSON(), 200
 
 @rest_api.route('/api/users/address')
-class SetAddress(Resource):
+class SetUserAddress(Resource):
+    """
+    Get information about a user.
+    """
+
+    @token_required
     def post(self, current_user):
-        req_data= request.get_json()
-        _address = req_data.get("address")
-        current_user.set_address(_address)
+        req_data = request.get_json()
+        address = req_data.get("address")
+        current_user.set_address(address)
         current_user.save()
         return {
             "success": True,
-            "address": _address.toJSON()
+            "user": current_user.toJSON()
         }, 200
 
 @rest_api.route('/api/users/register')
@@ -298,6 +303,30 @@ class GetGroup(Resource):
             'group': _group.toJSON()
         }, 200
 
+@rest_api.route('/api/groups/move')
+class MoveGroup(Resource):
+    """
+    Moves group to next event
+    """
+
+    @token_required
+    def post(self, current_user):
+        if current_user.id != current_user.group.leader.id:
+            return {
+                'success': False,
+                'reason': 'MUST_BE_LEADER_TO_MOVE_GROUP'
+            }, 200
+
+        if current_user.group.current_event < len(current_user.group.events) - 1:
+            return {
+                'success': True,
+                'group': current_user.group.toJSON()
+            }, 200
+        else:
+            return {
+                'success': False,
+                'reason': 'ALREADY_AT_LAST_EVENT'
+            }, 200
 
 @rest_api.route('/api/places')
 class NearbyPlaces(Resource):
@@ -443,3 +472,83 @@ class FinalizeGroupVotes(Resource):
         
         return {"success": True,
                 "Final": [e.toJSON() for e in current_user.group.events]}, 200
+
+@rest_api.route('/api/events/checkin')
+class CheckInToNextEvent(Resource):
+    """
+    Moves the user to the next event.
+    """
+
+    @token_required
+    def post(self, current_user):
+        if current_user.current_event == len(current_user.group.events) - 1:
+            # Already at the last event, so we can't check in to the next one.
+            return {
+                'success': False,
+                'reason': 'ALREADY_AT_LAST_EVENT',
+                'user': current_user.toJSON()
+            }
+        else:
+            current_user.current_event += 1
+            current_user.save()
+            return {
+                'success': True,
+                'user': current_user.toJSON()
+            }
+
+@rest_api.route('/api/events/next')
+class GetNextEvent(Resource):
+    """
+    Gets the current and next place/address for this user.
+    """
+
+    @token_required
+    def post(self, current_user):
+        if current_user.current_event == -1:
+            # User is at the starting address, there may not be a Place
+            # associated with this. Return the coordinates of the starting location.
+            next_event = current_user.group.events[0]
+            return {
+                'success': True,
+                'start_place': None,
+                'start_coords': {
+                    'lat': current_user.start_lat,
+                    'lng': current_user.start_lng
+                },
+                'end_place': next_event.place.place_id,
+                'end_coords': {
+                    'lat': next_event.place.lat,
+                    'lng': next_event.place.lng
+                }
+            }, 200
+        elif current_user.current_event != len(current_user.group.events) - 1:
+            # User is somewhere in the middle of the crawl
+            current_event = current_user.group.events[current_user.current_event]
+            next_event = current_user.group.events[current_user.current_event + 1]
+            return {
+                'success': True,
+                'start_place': current_event.place.place_id,
+                'start_coords': {
+                    'lat': current_event.place.lat,
+                    'lng': current_event.place.lng
+                },
+                'end_place': next_event.place.place_id,
+                'end_coords': {
+                    'lat': next_event.place.lat,
+                    'lng': next_event.place.lng
+                }
+            }, 200
+        else:   
+            # current_user.current_event == len(current_user.group.events)
+            # When the user is at the last place on the crawl.
+            current_event = current_user.group.events[current_user.current_event]
+            return {
+                'success': False,
+                'start_place': current_event.place.place_id,
+                'start_coords': {
+                    'lat': current_event.place.lat,
+                    'lng': current_event.place.lng
+                },
+                'end_place': None,
+                'end_coords': None
+            }, 200

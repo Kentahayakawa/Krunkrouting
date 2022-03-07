@@ -1,15 +1,13 @@
 from datetime import datetime
-from email.policy import default
 import random
 import string
 from collections import defaultdict
-import json
-from tkinter import Place
-from numpy import place
-from sqlalchemy import ForeignKey, null
+from sqlalchemy import ForeignKey
 
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
+
+from .navigation import to_coordinates
 
 db = SQLAlchemy()
 
@@ -25,6 +23,11 @@ class Users(db.Model):
     group_id = db.Column(db.Integer(), db.ForeignKey('groups.id'))
     group = db.relationship('Groups', backref=db.backref('members', lazy=True), foreign_keys=[group_id])
 
+    # Event logic
+    address = db.Column(db.String(64))
+    start_lat = db.Column(db.Float())
+    start_lng = db.Column(db.Float())
+    current_event = db.Column(db.Integer(), default=-1)
     
     def __repr__(self):
         return f"User {self.username}"
@@ -35,10 +38,14 @@ class Users(db.Model):
 
     def set_address(self, new_address):
         self.address = new_address
-
+        latlng = to_coordinates(self.address)
+        print(f'Setting address "{new_address}" --> to coords ({latlng[0]}, {latlng[1]})')
+        self.start_lat = latlng[0]
+        self.start_lng = latlng[1]
+        
     def set_password(self, password):
         self.password = generate_password_hash(password)
-
+        
     def check_password(self, password):
         return check_password_hash(self.password, password)
 
@@ -76,6 +83,12 @@ class Users(db.Model):
         result['group_id'] = self.group_id
         result['votes'] = [v.place_id for v in self.votes]
         result['_group_invite_code'] = self.group.invite_code
+        result['starting_location'] = {
+            'address': self.address,
+            'lat': self.start_lat,
+            'lng': self.start_lng
+        }
+        result['current_event_index'] = self.current_event
         return result
 
 class Groups(db.Model):
@@ -86,6 +99,7 @@ class Groups(db.Model):
     leader = db.relationship('Users', foreign_keys=[leader_id])
 
     allow_voting = db.Column(db.Boolean())
+    current_event = db.Column(db.Integer(), default=0)
 
     def __init__(self, leader_id):
         self.leader_id = leader_id
@@ -162,7 +176,8 @@ class Groups(db.Model):
         result['leader'] = self.leader.toJSON()
         result['members'] = [member.toJSON() for member in self.members]
         result['votes'] = self._tally_votes()
-        result['events'] = [event.toJSON() for event in self.events]
+        result['events'] = [event.toJSON() for event in self.events],
+        result['current_event'] = self.current_event
         return result
 
 class Votes(db.Model):
