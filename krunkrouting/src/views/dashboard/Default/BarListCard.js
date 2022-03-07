@@ -194,6 +194,8 @@ const BarListCard = ({ isLoading }) => {
                         )
                         .then(function (response2) {
                             if (response2.data.success) {
+                                console.log("Get group");
+                                console.log(response2.data.group);
                                 let tempbarlist = []
                                 for(const vote in response2.data.group.votes){
                                     tempbarlist.push({
