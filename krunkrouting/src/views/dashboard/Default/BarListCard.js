@@ -75,7 +75,6 @@ const IndividualBarElement = ({ isLoading, bar_id, bar_name, bar_address, bar_ra
     let str = "$";
     const account = useSelector((state) => state.account);
     const handlePositiveVote = () => {
-        console.log(bar_id);
         axios
             .post(configData.API_SERVER + 'vote', {"place_id": bar_id, "choice": "True"}, {headers: {Authorization: `${account.token}`}} 
             )
@@ -86,7 +85,6 @@ const IndividualBarElement = ({ isLoading, bar_id, bar_name, bar_address, bar_ra
     }
 
     const handleNegativeVote = () => {
-        console.log(bar_id);
         axios
             .post(configData.API_SERVER + 'vote', {"place_id": bar_id, "choice": "False"}, {headers: {Authorization: `${account.token}`}} 
             )
@@ -194,8 +192,6 @@ const BarListCard = ({ isLoading }) => {
                         )
                         .then(function (response2) {
                             if (response2.data.success) {
-                                console.log("Get group");
-                                console.log(response2.data.group);
                                 let tempbarlist = []
                                 for(const vote in response2.data.group.votes){
                                     tempbarlist.push({
@@ -227,8 +223,6 @@ const BarListCard = ({ isLoading }) => {
     const account = useSelector((state) => state.account);
     const [barList, setBarList] = React.useState([]);
 
-    console.log("barList");
-    console.log(barList);
     return (
         <React.Fragment>
             {isLoading ? (
@@ -259,8 +253,8 @@ const BarListCard = ({ isLoading }) => {
                                 {barList.map((result) => (
                                     <SubCard>
                                         <IndividualBarElement
-                                            key={result.place_id}
-                                            bar_id={result.place_id}
+                                            key={result.bar_id}
+                                            bar_id={result.bar_id}
                                             bar_name={result.bar_name}
                                             bar_address={result.bar_address}
                                             bar_rating={result.bar_rating}
