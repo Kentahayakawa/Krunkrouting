@@ -490,6 +490,12 @@ class FinalizeGroupVotes(Resource):
 
     @token_required
     def post(self, current_user):
+        if not current_user.group.allow_voting:
+            return {
+                "success": True,
+                "Final": [e.toJSON() for e in current_user.group.events]
+            }, 200 # this is kind of weird but Prakhar wants it this way so *shrug*
+        
         if current_user.id != current_user.group.leader.id:
             # Only the leader can finalize a group's votes.
             return {"success": False, "reason": "Must be leader to finalize group"}, 200
