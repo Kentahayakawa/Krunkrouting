@@ -11,7 +11,7 @@ import SearchResultsCard from './SearchResults';
 import TotalOrderLineChartCard from './TotalOrderLineChartCard';
 import TotalIncomeDarkCard from './TotalIncomeDarkCard';
 import TotalIncomeLightCard from './TotalIncomeLightCard';
-import TotalGrowthBarChart from './TotalGrowthBarChart';
+import MemberCard from './MemberCard';
 
 import { gridSpacing } from './../../../store/constant';
 
@@ -49,7 +49,7 @@ const Dashboard = () => {
                         <Grid item xs={12}>
                             <Grid container spacing={gridSpacing}>
                                 <Grid item xs={12} md={12}>
-                                    <TotalGrowthBarChart isLoading={isLoading} />
+                                    <MemberCard isLoading={isLoading} />
                                 </Grid>
                             </Grid>
                         </Grid>
@@ -89,7 +89,7 @@ const Dashboard = () => {
                     <Grid item xs={12}>
                         <Grid container spacing={gridSpacing}>
                             <Grid item xs={12} md={12}>
-                                <TotalGrowthBarChart isLoading={isLoading} />
+                                <MemberCard isLoading={isLoading} />
                             </Grid>
                         </Grid>
                     </Grid>
