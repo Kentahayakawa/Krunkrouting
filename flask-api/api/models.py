@@ -39,6 +39,9 @@ class Users(db.Model):
     def set_password(self, password):
         self.password = generate_password_hash(password)
 
+    def set_address(self, new_address):
+        self.address = new_address
+        
     def check_password(self, password):
         return check_password_hash(self.password, password)
 

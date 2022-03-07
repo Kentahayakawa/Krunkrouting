@@ -109,6 +109,25 @@ class GetUser(Resource):
         return _user.toJSON(), 200
 
 @rest_api.route('/api/users/address')
+
+class SetUserAddress(Resource):
+    """
+    Get information about a user.
+    """
+
+    @token_required
+    def post(self, current_user):
+        req_data = request.get_json()
+        address = req_data.get("address")
+        current_user.set_address(address)
+        current_user.save()
+        return {
+            "success": True,
+            "address": address.toJSON()
+        }, 200
+
+
+
 class SetAddress(Resource):
     def post(self, current_user):
         req_data= request.get_json()
@@ -120,6 +139,7 @@ class SetAddress(Resource):
             "address": _address.toJSON()
         }, 200
         
+
 @rest_api.route('/api/users/register')
 class Register(Resource):
     """
