@@ -1,29 +1,24 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 
 // material-ui
 import { makeStyles } from '@material-ui/styles';
-import { Avatar, Button, Box, ButtonBase, CardActions, CardContent, Divider, Grid, Menu, MenuItem, Typography, Rating } from '@material-ui/core';
+import { CardContent,  Grid, Typography } from '@material-ui/core';
 
 // project imports
 import SubCard from '../../../ui-component/cards/SubCard';
-import BajajAreaChartCard from './BajajAreaChartCard';
 import MainCard from '../../../ui-component/cards/MainCard';
 import configData from '../../../config';
 import SkeletonPopularCard from '../../../ui-component/cards/Skeleton/PopularCard';
 import { gridSpacing } from '../../../store/constant';
-import {CLEAR_SEARCH_RESULTS} from '../../../store/actions'; // SEARCH_RTL
 
 // assets
 import axios from 'axios';
-import ChevronRightOutlinedIcon from '@material-ui/icons/ChevronRightOutlined';
-import MoreHorizOutlinedIcon from '@material-ui/icons/MoreHorizOutlined';
 import RefreshIcon from '@material-ui/icons/Refresh';
 import Close from '@material-ui/icons/Close';
-import KeyboardArrowUpOutlinedIcon from '@material-ui/icons/KeyboardArrowUpOutlined';
-import KeyboardArrowDownOutlinedIcon from '@material-ui/icons/KeyboardArrowDownOutlined';
+
 
 // assets
 import { IconCirclePlus, IconTrash} from '@tabler/icons';
@@ -154,48 +149,16 @@ const MemberCard = ({ isLoading }) => {
     
     const classes = useStyles();
     const account = useSelector((state) => state.account);
-    const dispatch = useDispatch();
 
-    const [anchorEl, setAnchorEl] = React.useState(null);
 
-    const handleClick = (event) => {
-        setAnchorEl(event.currentTarget);
-        dispatch({type: CLEAR_SEARCH_RESULTS});
-    };
 
-    const handleClose = () => {
-        setAnchorEl(null);
-    };
+
     // const shouldRender = (account && account.search_results && account.search_results.length !==0)? !isLoading: 0 
     // console.log(shouldRender);
     // console.log(account.search_results);
     const [members, setMembers] = React.useState([]);
-    const [Toggle, setToggle] = React.useState(1);
 
-    // if(Toggle == 1){
-    //     axios
-    //         .post(configData.API_SERVER + 'users', {"user_id": account.user._id}, {headers: {Authorization: `${account.token}`}} 
-    //         )
-    //         .then(function (response) {
-    //             console.log(response.data);
-    //             if (response.data) {
-    //                 axios
-    //                     .post(configData.API_SERVER + 'groups', {"group_id": response.data.group_id}, {headers: {Authorization: `${account.token}`}} 
-    //                     )
-    //                     .then(function (response2) {
-    //                         console.log(response2.data);
-    //                         if (response2.data.success) {
-    //                             setMembers(response2.data.group.members);
-    //                             console.log("GET GROUP");
-    //                             console.log(response2.data);
-    //                         }
-    //                     }).catch(function (error) {
-    //                     });
-    //             }
-    //         }).catch(function (error) {
-    //         });
-    // }
-    // setToggle(0);
+
     console.log(members);
     return (
         <React.Fragment>

@@ -33,6 +33,9 @@ class Users(db.Model):
         db.session.add(self)
         db.session.commit()
 
+    def set_address(self, new_address):
+        self.address = new_address
+        
     def set_password(self, password):
         self.password = generate_password_hash(password)
 
