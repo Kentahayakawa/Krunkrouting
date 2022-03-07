@@ -1,6 +1,6 @@
 // action - account reducer
 export const LOGIN = 'LOGIN';
-export const GROUP_INIT = "GROUP_INIT";
+export const GROUP_JOIN = "GROUP_JOIN";
 export const LOGOUT = 'LOGOUT';
 export const ACCOUNT_INITIALIZE = 'ACCOUNT_INITIALIZE';
 export const PRICE_FILTER = 'PRICE_FILTER';

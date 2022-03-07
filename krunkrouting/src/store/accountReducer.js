@@ -1,5 +1,5 @@
 // action - state management
-import { ACCOUNT_INITIALIZE, GROUP_INIT, LOGIN, INVITE_CODE, LOGOUT, PRICE_FILTER, RATING_FILTER, DISTANCE_FILTER, SEARCH_RESULTS, CLEAR_SEARCH_RESULTS} from './actions';
+import { ACCOUNT_INITIALIZE, GROUP_JOIN, LOGIN, INVITE_CODE, LOGOUT, PRICE_FILTER, RATING_FILTER, DISTANCE_FILTER, SEARCH_RESULTS, CLEAR_SEARCH_RESULTS} from './actions';
 
 export const initialState = {
     token: '',
@@ -7,7 +7,8 @@ export const initialState = {
     isInitialized: false,
     user: null,
     group_invite_code: null,
-    search_results: []
+    search_results: [],
+    group: null
 };
 
 //-----------------------|| ACCOUNT REDUCER ||-----------------------//
@@ -64,6 +65,18 @@ const accountReducer = (state = initialState, action) => {
             const {group_invite_code} = action.payload;
             return {
                 ...state,
+                group_invite_code
+            };
+        }
+
+        case GROUP_JOIN:{
+            const {user, group, group_invite_code} = action.payload;
+            user.group_id = group.id;
+            user._group_invite_code = group.invite_code;
+            return {
+                ...state,
+                user,
+                group,
                 group_invite_code
             };
         }

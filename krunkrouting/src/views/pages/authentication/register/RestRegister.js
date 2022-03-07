@@ -32,7 +32,7 @@ import axios from 'axios';
 import useScriptRef from '../../../../hooks/useScriptRef';
 import AnimateButton from './../../../../ui-component/extended/AnimateButton';
 import { strengthColor, strengthIndicator } from '../../../../utils/password-strength';
-import { GROUP_INIT } from './../../../../store/actions';
+import { GROUP_JOIN } from './../../../../store/actions';
 
 // assets
 import Visibility from '@material-ui/icons/Visibility';
