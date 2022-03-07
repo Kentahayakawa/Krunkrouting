@@ -25,8 +25,8 @@ import {
 
 
 // assets
-import { FINAL_SCHEDULE} from '../../../../store/actions'; // SEARCH_RTL
-import { IconRun } from '@tabler/icons';
+import { FINAL_SCHEDULE, CURRENT_ROUTE} from '../../../../store/actions'; // SEARCH_RTL
+import { IconRun, IconPlayerTrackNext } from '@tabler/icons';
 import axios from 'axios';
 
 // style constant
@@ -167,6 +167,28 @@ const NotificationSection = () => {
                         })
                         .catch(function (error){
                     });
+
+                    axios
+                        .post(configData.API_SERVER + 'events/next', {}, {headers: {Authorization: `${account.token}`}})
+                        .then(function(response2){
+                
+                            if(response2.data.success){
+                                dispatch({
+                                    type: CURRENT_ROUTE,
+                                    payload: { 
+                                        orglat: response2.data.start_coords.lat,
+                                        orglng: response2.data.start_coords.lng,
+                                        destlat: response2.data.end_coords.lat,
+                                        destlng: response2.data.end_coords.lng,
+                                    }
+                                });
+                                console.log("CURRENT_ROTE");
+                                console.log(response2.data.start_coords.lat, response2.data.start_coords.lng, response2.data.end_coords.lat, response2.data.end_coords.lng);
+                            }
+                        })
+                        .catch(function (error){
+                    });
+
                 }
             })
             .catch(function(error){
@@ -174,11 +196,46 @@ const NotificationSection = () => {
             });
         }
 
+        const handleMoveGroup = () =>{
+            axios
+                .post(configData.API_SERVER + 'groups/move', {}, {headers: {Authorization: `${account.token}` }})
+                .then(function(response){
+                    console.log("Moving the group");
+                    console.log(response.data);
+                })
+                .catch(function(error){
+                    console.log(error);
+                });
+            
+            axios
+                .post(configData.API_SERVER + 'events/checkin', {}, {headers: {Authorization: `${account.token}` }})
+                .then(function(response){
+                    console.log("Checking In to the event");
+                    console.log(response.data);
+                })
+                .catch(function(error){
+                    console.log(error);
+                });
+        }
+
 
 
     return (
         <React.Fragment>
             <Box component="span" className={classes.box}>
+                <ButtonBase onClick={handleMoveGroup} sx={{ borderRadius: '12px' }}>
+                    <Avatar
+                        variant="rounded"
+                        className={classes.headerAvatar}
+                        ref={anchorRef}
+                        aria-controls={open ? 'menu-list-grow' : undefined}
+                        aria-haspopup="true"
+                        onClick={handleToggle}
+                        color="inherit"
+                    >
+                        <IconPlayerTrackNext stroke={1.5} size="2.3rem" />
+                    </Avatar>
+                </ButtonBase>
                 <ButtonBase onClick={handleFinalize} sx={{ borderRadius: '12px' }}>
                     <Avatar
                         variant="rounded"
