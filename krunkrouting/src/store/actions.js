@@ -9,6 +9,7 @@ export const RATING_FILTER = 'RATING_FILTER';
 export const SEARCH_RESULTS = 'SEARCH_RESULTS';
 export const CLEAR_SEARCH_RESULTS = 'CLEAR_SEARCH_RESULTS';
 export const INVITE_CODE = 'INVITE_CODE';
+export const FINAL_SCHEDULE = 'FINAL_SCHEDULE';
 
 // action - customization reducer
 export const SET_MENU = '@customization/SET_MENU';

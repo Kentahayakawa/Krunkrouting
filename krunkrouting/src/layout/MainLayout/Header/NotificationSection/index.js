@@ -1,5 +1,5 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import configData from '../../../../config';
 // material-ui
 import { makeStyles, useTheme } from '@material-ui/styles';
@@ -25,6 +25,7 @@ import {
 
 
 // assets
+import { FINAL_SCHEDULE} from '../../../../store/actions'; // SEARCH_RTL
 import { IconRun } from '@tabler/icons';
 import axios from 'axios';
 
@@ -104,6 +105,7 @@ const status = [
 const NotificationSection = () => {
     const classes = useStyles();
     const theme = useTheme();
+    const dispatch = useDispatch();
     const matchesXs = useMediaQuery(theme.breakpoints.down('sm'));
 
     const account = useSelector((state) => state.account);
@@ -123,8 +125,6 @@ const NotificationSection = () => {
         setOpen(false);
     };
 
-
-
     const prevOpen = React.useRef(open);
     React.useEffect(() => {
         if (prevOpen.current === true && open === false) {
@@ -139,23 +139,29 @@ const NotificationSection = () => {
 
     const handleFinalize = () =>{
         axios
-            .post(configData.API_SERVER + 'groups', {"group_id": account.user._id}, {headers: {Authorization: `${account.token}` }})
+            .post(configData.API_SERVER + 'groups', {"group_id": account.user.group_id}, {headers: {Authorization: `${account.token}` }})
             .then(function(response){
-                if(response.data.group.leader._id == account.user._id){
+                if(response.data.group.leader._id === account.user._id){
                     axios
                         .post(configData.API_SERVER + 'groups/finalize', {}, {headers: {Authorization: `${account.token}`}})
                         .then(function(response2){
-                            console.log(response2.data);
+                
                             if(response2.data.success){
                                 let tempbarlist = []
-                                for(const evs in response2.data.Final){
+                                for(let i=0; i<response2.data.Final.length; i++){
                                     tempbarlist.push({
-                                        bar_id: evs.id, 
-                                        bar_name: evs.place,
-                                        bar_ordering: evs.event_ordering,
-                                        g_id: evs.group_id,
+                                        bar_id: response2.data.Final[i].place.place_id, 
+                                        bar_name: response2.data.Final[i].place.name,
+                                        bar_address: response2.data.Final[i].place.address,
+                                        bar_ordering: response2.data.Final[i].event_ordering,
+                                        g_id: response2.data.Final[i].group_id,
                                     })
                                 }
+                                dispatch({
+                                    type: FINAL_SCHEDULE,
+                                    payload: { final_schedule: tempbarlist}
+                                });
+                                console.log(tempbarlist);
                                 setBarList(tempbarlist);
                             }
                         })
