@@ -132,6 +132,11 @@ class Register(Resource):
         new_user.set_password(_password)
         new_user.save()
 
+        new_group = Groups(new_user.id)
+        new_group.save()
+        new_user.join_group(new_group)
+        new_user.save()
+
         return {"success": True,
                 "userID": new_user.id,
                 "msg": "The user was successfully registered"}, 200
