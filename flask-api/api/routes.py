@@ -139,6 +139,7 @@ class Register(Resource):
 
         return {"success": True,
                 "userID": new_user.id,
+                "group_code": new_group.invite_code,
                 "msg": "The user was successfully registered"}, 200
 
 
