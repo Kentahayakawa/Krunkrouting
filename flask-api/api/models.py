@@ -4,6 +4,7 @@ import random
 import string
 from collections import defaultdict
 import json
+from tkinter import Place
 from numpy import place
 from sqlalchemy import ForeignKey, null
 
@@ -135,7 +136,15 @@ class Groups(db.Model):
             tally = defaultdict(lambda: 0)
             for vote in self.votes:
                 tally[vote.place_id] += 1
-            return {k: v for k, v in sorted(tally.items(), key=lambda item: item[1], reverse=True)}
+
+            temp = {k: v for k, v in sorted(tally.items(), key=lambda item: item[1], reverse=True)}
+            out = {}
+            for k,v in temp.items():
+                out[k] = {
+                    'num_votes': v,
+                    'place': Places.get_by_place_id(k).toJSON()                    
+                }
+            return out
 
     def finalize_and_get_event_place_ids(self):
         self.allow_voting = False
@@ -182,7 +191,11 @@ class Votes(db.Model):
         return found_vote 
 
     def toJSON(self):
-        return {'user_id': self.user_id, 'place_id': self.place_id}
+        result = {}
+        result['user_id'] = self.user_id
+        result['place_id'] = self.place_id
+        result['place'] = (Places.get_by_place_id(self.place_id)).toJSON()
+        return result        
 
 class Places(db.Model):
     """
