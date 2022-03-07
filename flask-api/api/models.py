@@ -1,15 +1,13 @@
 from datetime import datetime
-from email.policy import default
 import random
 import string
 from collections import defaultdict
-import json
-from tkinter import Place
-from numpy import place
-from sqlalchemy import ForeignKey, null
+from sqlalchemy import ForeignKey
 
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
+
+from .navigation import to_coordinates
 
 db = SQLAlchemy()
 
@@ -18,13 +16,17 @@ class Users(db.Model):
     username = db.Column(db.String(32), nullable=False)
     email = db.Column(db.String(64), nullable=False)
     password = db.Column(db.Text())
-    address = db.Column(db.String(32))
     jwt_auth_active = db.Column(db.Boolean())
     date_joined = db.Column(db.DateTime(), default=datetime.utcnow)
     
     group_id = db.Column(db.Integer(), db.ForeignKey('groups.id'))
     group = db.relationship('Groups', backref=db.backref('members', lazy=True), foreign_keys=[group_id])
 
+    # Event logic
+    address = db.Column(db.String(64))
+    start_lat = db.Column(db.Float())
+    start_lng = db.Column(db.Float())
+    current_event = db.Column(db.Integer(), default=-1)
     
     def __repr__(self):
         return f"User {self.username}"
@@ -35,6 +37,9 @@ class Users(db.Model):
 
     def set_address(self, new_address):
         self.address = new_address
+        latlng = to_coordinates(self.address)
+        self.start_lat = latlng[0]
+        self.start_lng = latlng[1]
         
     def set_password(self, password):
         self.password = generate_password_hash(password)
@@ -79,6 +84,11 @@ class Users(db.Model):
         result['group_id'] = self.group_id
         result['votes'] = [v.place_id for v in self.votes]
         result['_group_invite_code'] = self.group.invite_code
+        result['starting_location'] = {
+            'address': self.address,
+            'lat': self.start_lat,
+            'lng': self.start_lng
+        }
         return result
 
 class Groups(db.Model):
