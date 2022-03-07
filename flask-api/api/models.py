@@ -182,7 +182,11 @@ class Votes(db.Model):
         return found_vote 
 
     def toJSON(self):
-        return {'user_id': self.user_id, 'place_id': self.place_id}
+        result = {}
+        result['user_id'] = self.user_id
+        result['place_id'] = self.place_id
+        result['place'] = (Places.get_by_place_id(self.place_id)).toJSON()
+        return result        
 
 class Places(db.Model):
     """
