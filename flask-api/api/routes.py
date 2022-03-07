@@ -117,7 +117,7 @@ class SetAddress(Resource):
         current_user.save()
         return {
             "success": True,
-            "address": address.toJSON()
+            "address": _address.toJSON()
         }
         
 @rest_api.route('/api/users/register')
@@ -441,4 +441,5 @@ class FinalizeGroupVotes(Resource):
         for event in current_user.group.events:
             event.save()
         
-        return {"success": [e.toJSON() for e in current_user.group.events]}, 200
+        return {"success": True,
+                "Final": [e.toJSON() for e in current_user.group.events]}, 200
