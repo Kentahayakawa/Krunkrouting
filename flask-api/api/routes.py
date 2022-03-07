@@ -69,8 +69,11 @@ class GetUser(Resource):
     @token_required
     def post(self, current_user):
         req_data = request.get_json()
-        _user = Users.get_by_id(req_data.get("user_id"))
-        return _user.toJSON(), 200
+        if req_data.get("user_id"):
+            _user = Users.get_by_id(req_data.get("user_id"))
+            return _user.toJSON(), 200
+        else:
+            return current_user.toJSON(), 200
 
 AddressModel = rest_api.model(
     'AddressModel',
@@ -199,12 +202,12 @@ class EditUser(Resource):
         _new_email = req_data.get("email")
 
         if _new_username:
-            self.update_username(_new_username)
+            current_user.update_username(_new_username)
 
         if _new_email:
-            self.update_email(_new_email)
+            current_user.update_email(_new_email)
 
-        self.save()
+        current_user.save()
 
         return {"success": True}, 200
 
@@ -307,11 +310,17 @@ class GetGroup(Resource):
     @token_required
     def post(self, current_user):
         req_data = request.get_json()
-        _group = Groups.get_by_id(req_data.get("group_id"))
-        return {
-            'success': True,
-            'group': _group.toJSON()
-        }, 200
+        if req_data.get("group_id"):
+            _group = Groups.get_by_id(req_data.get("group_id"))
+            return {
+                'success': True,
+                'group': _group.toJSON()
+            }, 200
+        else:
+            return {
+                'success': True,
+                'group': current_user.group.toJSON()
+            }, 200
 
 move_group_model = rest_api.model(
     'MoveGroupToNextEventModel',
