@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { useSelector } from 'react-redux';
 
 // material-ui
 import { makeStyles } from '@material-ui/styles';
@@ -105,6 +106,9 @@ const TotalOrderLineChartCard = ({ isLoading }) => {
         setTimeValue(newValue);
     };
 
+    const account = useSelector((state) => state.account);
+    const group_invite_code = account ? account.group_invite_code : "123";
+
     return (
         <React.Fragment>
             {isLoading ? (
@@ -112,56 +116,14 @@ const TotalOrderLineChartCard = ({ isLoading }) => {
             ) : (
                 <MainCard border={false} className={classes.card} contentClass={classes.content}>
                     <Grid container direction="column">
-                        <Grid item>
-                            <Grid container justifyContent="space-between">
-                                <Grid item>
-                                    <Avatar variant="rounded" className={classes.avatar}>
-                                        <LocalMallOutlinedIcon fontSize="inherit" />
-                                    </Avatar>
-                                </Grid>
-                                <Grid item>
-                                    <Button
-                                        disableElevation
-                                        variant={timeValue ? 'contained' : 'string'}
-                                        size="small"
-                                        onClick={(e) => handleChangeTime(e, true)}
-                                    >
-                                        Month
-                                    </Button>
-                                    <Button
-                                        disableElevation
-                                        variant={!timeValue ? 'contained' : 'string'}
-                                        size="small"
-                                        onClick={(e) => handleChangeTime(e, false)}
-                                    >
-                                        Year
-                                    </Button>
-                                </Grid>
-                            </Grid>
-                        </Grid>
                         <Grid item sx={{ mb: 0.75 }}>
                             <Grid container alignItems="center">
-                                <Grid item xs={6}>
-                                    <Grid container alignItems="center">
+                                <Grid item xs={12}>
+                                    <Grid container justifyContent="center">
                                         <Grid item>
-                                            {timeValue ? (
-                                                <Typography className={classes.cardHeading}>$108</Typography>
-                                            ) : (
-                                                <Typography className={classes.cardHeading}>$961</Typography>
-                                            )}
-                                        </Grid>
-                                        <Grid item>
-                                            <Avatar className={classes.avatarCircle}>
-                                                <ArrowDownwardIcon fontSize="inherit" className={classes.circleIcon} />
-                                            </Avatar>
-                                        </Grid>
-                                        <Grid item xs={12}>
-                                            <Typography className={classes.subHeading}>Total Order</Typography>
+                                            <Typography className={classes.cardHeading}>Group Code: {" "}{group_invite_code}</Typography>
                                         </Grid>
                                     </Grid>
-                                </Grid>
-                                <Grid item xs={6}>
-                                    {timeValue ? <Chart {...ChartDataMonth} /> : <Chart {...ChartDataYear} />}
                                 </Grid>
                             </Grid>
                         </Grid>

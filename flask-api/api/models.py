@@ -4,6 +4,7 @@ import random
 import string
 from collections import defaultdict
 import json
+from tkinter import Place
 from numpy import place
 from sqlalchemy import ForeignKey, null
 
@@ -70,6 +71,7 @@ class Users(db.Model):
         result['email'] = self.email
         result['group_id'] = self.group_id
         result['votes'] = [v.place_id for v in self.votes]
+        result['_group_invite_code'] = self.group.invite_code
         return result
 
 class Groups(db.Model):
@@ -109,6 +111,24 @@ class Groups(db.Model):
             result = gen_invite_code()
         return result
 
+    def remove_member(self, member):
+        """
+        Removes a user from the member list when user leaves the group.
+        """
+        members = []
+        for keepmember in self.members:
+            if keepmember.id != member.id:
+                members.append(keepmember)
+        self.members = members
+
+        if (self.leader_id == member.id):
+            if(len(members) != 0):
+                self.leader_id = members[0].id
+            else:
+                db.session.delete(self)
+        
+        db.session.commit()
+
     @classmethod
     def get_by_invite_code(cls, invite_code):
         return cls.query.filter_by(invite_code=invite_code).first()
@@ -117,7 +137,15 @@ class Groups(db.Model):
         tally = defaultdict(lambda: 0)
         for vote in self.votes:
             tally[vote.place_id] += 1
-        return {k: v for k, v in sorted(tally.items(), key=lambda item: item[1], reverse=True)}
+
+        temp = {k: v for k, v in sorted(tally.items(), key=lambda item: item[1], reverse=True)}
+        out = {}
+        for k,v in temp.items():
+            out[k] = {
+                'num_votes': v,
+                'place': Places.get_by_place_id(k).toJSON()                    
+            }
+        return out
 
     def finalize_and_get_event_place_ids(self):
         self.allow_voting = False
@@ -164,7 +192,11 @@ class Votes(db.Model):
         return found_vote 
 
     def toJSON(self):
-        return {'user_id': self.user_id, 'place_id': self.place_id}
+        result = {}
+        result['user_id'] = self.user_id
+        result['place_id'] = self.place_id
+        result['place'] = (Places.get_by_place_id(self.place_id)).toJSON()
+        return result        
 
 class Places(db.Model):
     """
@@ -177,8 +209,9 @@ class Places(db.Model):
     lng = db.Column(db.Float())
     price_level = db.Column(db.Integer())
     rating = db.Column(db.Float())
+    user_ratings_total = db.Column(db.Integer())
 
-    def __init__(self, place_id, name, address, lat, lng, price_level, rating):
+    def __init__(self, place_id, name, address, lat, lng, price_level, rating, user_ratings_total):
         self.place_id = place_id
         self.name = name
         self.address = address
@@ -186,6 +219,7 @@ class Places(db.Model):
         self.lng = lng
         self.price_level = price_level
         self.rating = rating
+        self.user_ratings_total = user_ratings_total
 
     def save(self):
         db.session.add(self)
@@ -199,7 +233,8 @@ class Places(db.Model):
             'lat': self.lat,
             'lng': self.lng,
             'price_level': self.price_level,
-            'rating': self.rating
+            'rating': self.rating,
+            'user_ratings_total': self.user_ratings_total
         }
 
     @classmethod

@@ -6,6 +6,9 @@ export const ACCOUNT_INITIALIZE = 'ACCOUNT_INITIALIZE';
 export const PRICE_FILTER = 'PRICE_FILTER';
 export const DISTANCE_FILTER = 'DISTANCE_FILTER';
 export const RATING_FILTER = 'RATING_FILTER';
+export const SEARCH_RESULTS = 'SEARCH_RESULTS';
+export const CLEAR_SEARCH_RESULTS = 'CLEAR_SEARCH_RESULTS';
+export const INVITE_CODE = 'INVITE_CODE';
 
 // action - customization reducer
 export const SET_MENU = '@customization/SET_MENU';

@@ -138,11 +138,13 @@ const ProfileSection = () => {
             .then(function (response) {
                 
                 // Force the LOGOUT
-                //if (response.data.success) {
+                if (response.data.success) {
                     dispatcher({ type: LOGOUT });
-                //} else {
-                //    console.log('response - ', response.data.msg);
-                //}
+                } else {
+                    console.log('response - ', response.data.msg);
+                }
+                console.log("LOGOUT");
+                console.log(response.data);
             })
             .catch(function (error) {
                 console.log('error - ', error);

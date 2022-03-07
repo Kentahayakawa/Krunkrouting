@@ -132,8 +132,14 @@ class Register(Resource):
         new_user.set_password(_password)
         new_user.save()
 
+        new_group = Groups(new_user.id)
+        new_group.save()
+        new_user.join_group(new_group)
+        new_user.save()
+
         return {"success": True,
                 "userID": new_user.id,
+                "group_code": new_group.invite_code,
                 "msg": "The user was successfully registered"}, 200
 
 
@@ -223,6 +229,9 @@ class CreateGroup(Resource):
     @rest_api.expect(create_group_model)
     @token_required
     def post(self, current_user):
+        old_group = current_user.group
+        if not old_group == None:
+            old_group.remove_member(current_user)
         new_group = Groups(current_user.id)
         new_group.save()
         current_user.join_group(new_group)
@@ -251,7 +260,9 @@ class JoinGroup(Resource):
             # TODO: Any extra logic we need to leave current group.
             # For example, if the current user is the leader of the
             # group then we would need to assign a new leader.
-            pass
+            old_group = current_user.group
+            if not old_group == None:
+                old_group.remove_member(current_user)
         
         current_user.join_group(_group)
         current_user.save()
@@ -270,7 +281,10 @@ class GetGroup(Resource):
     def post(self, current_user):
         req_data = request.get_json()
         _group = Groups.get_by_id(req_data.get("group_id"))
-        return _group.toJSON(), 200
+        return {
+            'success': True,
+            'group': _group.toJSON()
+        }, 200
 
 
 @rest_api.route('/api/places')
@@ -308,19 +322,20 @@ class NearbyPlaces(Resource):
             min_rating = args['min_rating'] if args['min_rating'] else 0
         )
 
+        # Cache places
         for place in places:
-            # Add to the cache
             if not Places.get_by_place_id(place['id']):
-                place_sql = Places( 
+                place_sql = Places(
                     place['id'],
                     place['name'],
                     place['address'],
                     place['lat'],
                     place['lng'],
                     place['price_level'],
-                    place['rating']
+                    place['rating'],
+                    place['user_ratings_total']
                 )
-            place_sql.save()
+                place_sql.save()
         
         return [Places.get_by_place_id(place['id']).toJSON() for place in places], 200
 

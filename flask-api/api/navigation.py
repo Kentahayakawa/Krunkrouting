@@ -22,7 +22,7 @@ def get_places(coordinates, radius, min_price, max_price, min_rating):
         language='en',
         min_price=min_price,
         max_price=max_price,
-        open_now=True,
+        open_now=False,
         type='bar'
     )
 
@@ -37,6 +37,7 @@ def get_places(coordinates, radius, min_price, max_price, min_rating):
         bar['lat'] = result['geometry']['location']['lat']
         bar['lng'] = result['geometry']['location']['lng']
         bar['price_level'] = result['price_level']
+        bar['user_ratings_total'] = result['user_ratings_total']
 
         if result['rating'] >= min_rating:
             bar['rating'] = result['rating']

@@ -21,7 +21,7 @@ import PopupState, { bindPopper, bindToggle } from 'material-ui-popup-state';
 
 // project imports
 import Transitions from '../../../../ui-component/extended/Transitions';
-import { PRICE_FILTER, DISTANCE_FILTER, RATING_FILTER} from '../../../../store/actions'; // SEARCH_RTL
+import { PRICE_FILTER, DISTANCE_FILTER, RATING_FILTER, SEARCH_RESULTS, CLEAR_SEARCH_RESULTS} from '../../../../store/actions'; // SEARCH_RTL
 
 // assets
 import { IconAdjustmentsHorizontal, IconSearch, IconX, IconGlassFull } from '@tabler/icons';
@@ -160,12 +160,27 @@ const SearchSection = () => {
                 headers: { Authorization: `${account.token}` } 
             })
             .then(function (response) {
-                console.log(response)
+                if(response.data){
+                    if(response.data.status){
+                        dispatch({type: CLEAR_SEARCH_RESULTS});
+                    }
+                    else{
+                        dispatch({
+                            type: SEARCH_RESULTS,
+                            payload: { search_results: response.data}
+                        });
+                    }
+                }
+                else{
+                    dispatch({type: CLEAR_SEARCH_RESULTS});
+                }
             })
             .catch(function (error) {
+                dispatch({type: CLEAR_SEARCH_RESULTS});
                 console.log('error - ', error);
             });
     }
+
     React.useEffect(() => {
         if (prevOpen.current === true && open === false) {
             anchorRef.current.focus();
