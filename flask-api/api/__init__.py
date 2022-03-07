@@ -6,17 +6,17 @@ from flask_cors import CORS
 from .routes import rest_api
 from .models import db
 
-def create_app():
+def create_app(config_src):
     app = Flask(__name__)
     
-    app.config.from_object('api.config.BaseConfig')
+    app.config.from_object(config_src)
 
     db.init_app(app)
     rest_api.init_app(app)
     CORS(app)
     return app
 
-app = create_app()
+app = create_app('api.config.BaseConfig')
 
 # Setup database
 @app.before_first_request
