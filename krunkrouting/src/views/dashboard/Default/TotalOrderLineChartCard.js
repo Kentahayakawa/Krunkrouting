@@ -108,9 +108,11 @@ const TotalOrderLineChartCard = ({ isLoading }) => {
         setTimeValue(newValue);
     };
     
+    const [groupInviteCode, setGroupInviteCode] = React.useState(false);
     const account = useSelector((state) => state.account);
-    console.log(account.user._group_invite_code);
-    let group_invite_code = account ? account.user._group_invite_code : "123";
+    const state = useSelector((state) => state);
+    console.log(account.group_invite_code);
+    let group_invite_code = account ? account.group_invite_code : "123";
 
     // useEffect(() => {
     //     group_invite_code = account.user._group_invite_code;
@@ -119,9 +121,12 @@ const TotalOrderLineChartCard = ({ isLoading }) => {
 
     useEffect(() => {
         // dispatch({ type: INVITE_CODE, payload: {group_invite_code: account.user._group_invite_code}});
-        group_invite_code = account ? account.user._group_invite_code : "123";
+        setGroupInviteCode(account.group_invite_code);
         console.log("Hello")
-        console.log(account.user._group_invite_code);
+        console.log(account.group_invite_code);
+        console.log(account);
+        console.log(state);
+        
     }, [account]);
 
     return (
@@ -136,7 +141,7 @@ const TotalOrderLineChartCard = ({ isLoading }) => {
                                 <Grid item xs={12}>
                                     <Grid container justifyContent="center">
                                         <Grid item>
-                                            <Typography className={classes.cardHeading}>Group Code: {" "}{group_invite_code}</Typography>
+                                            <Typography className={classes.cardHeading}>Group Code: {" "}{groupInviteCode}</Typography>
                                         </Grid>
                                     </Grid>
                                 </Grid>
