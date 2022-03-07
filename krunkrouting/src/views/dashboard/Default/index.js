@@ -5,12 +5,8 @@ import { useSelector } from 'react-redux';
 import { Grid } from '@material-ui/core';
 
 // project imports
-import EarningCard from './EarningCard';
-import PopularCard from './PopularCard';
+import TotalCards from './TotalCards';
 import SearchResultsCard from './SearchResults';
-import TotalOrderLineChartCard from './TotalOrderLineChartCard';
-import TotalIncomeDarkCard from './TotalIncomeDarkCard';
-import TotalIncomeLightCard from './TotalIncomeLightCard';
 import MemberCard from './MemberCard';
 
 import { gridSpacing } from './../../../store/constant';
@@ -31,24 +27,14 @@ const Dashboard = () => {
                     <Grid container spacing={gridSpacing}>
                         <Grid item xs={12}>
                             <Grid container spacing={gridSpacing}>
-                                <Grid item lg={6} md={6} sm={6} xs={12}>
-                                    <TotalOrderLineChartCard isLoading={isLoading} />
-                                </Grid>
-                                <Grid item lg={6} md={12} sm={12} xs={12}>
-                                    <Grid container spacing={gridSpacing}>
-                                        <Grid item sm={6} xs={12} md={6} lg={12}>
-                                            <TotalIncomeDarkCard isLoading={isLoading} />
-                                        </Grid>
-                                        <Grid item sm={6} xs={12} md={6} lg={12}>
-                                            <TotalIncomeLightCard isLoading={isLoading} />
-                                        </Grid>
-                                    </Grid>
+                                <Grid item lg={12} md={12} sm={12} xs={12}>
+                                    <TotalCards isLoading={isLoading} />
                                 </Grid>
                             </Grid>
                         </Grid>
                         <Grid item xs={12}>
                             <Grid container spacing={gridSpacing}>
-                                <Grid item xs={12} md={12}>
+                                <Grid item xs={12} md={12} lg={12}>
                                     <MemberCard isLoading={isLoading} />
                                 </Grid>
                             </Grid>
@@ -60,29 +46,19 @@ const Dashboard = () => {
     }
     return (
         <Grid container justifyContent="flex-end" direction="row" spacing={gridSpacing}>
-            <Grid item xs={12} lg={4}>
+            <Grid item xs={12} lg={12}>
                 <Grid container>
                     <Grid item xs={12}>
                         <SearchResultsCard isLoading={isLoading} />
                     </Grid>
                 </Grid>
             </Grid>
-            <Grid item xs={12} lg={8}>
+            <Grid item xs={12} lg={12}>
                 <Grid container spacing={gridSpacing}>
                     <Grid item xs={12}>
                         <Grid container spacing={gridSpacing}>
-                            <Grid item lg={6} md={6} sm={6} xs={12}>
-                                <TotalOrderLineChartCard isLoading={isLoading} />
-                            </Grid>
-                            <Grid item lg={6} md={12} sm={12} xs={12}>
-                                <Grid container spacing={gridSpacing}>
-                                    <Grid item sm={6} xs={12} md={6} lg={12}>
-                                        <TotalIncomeDarkCard isLoading={isLoading} />
-                                    </Grid>
-                                    <Grid item sm={6} xs={12} md={6} lg={12}>
-                                        <TotalIncomeLightCard isLoading={isLoading} />
-                                    </Grid>
-                                </Grid>
+                            <Grid item lg={12} md={12} sm={12} xs={12}>
+                                <TotalCards isLoading={isLoading} />
                             </Grid>
                         </Grid>
                     </Grid>
