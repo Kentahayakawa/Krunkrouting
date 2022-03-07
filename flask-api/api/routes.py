@@ -118,7 +118,7 @@ class SetAddress(Resource):
         return {
             "success": True,
             "address": _address.toJSON()
-        }
+        }, 200
         
 @rest_api.route('/api/users/register')
 class Register(Resource):
