@@ -169,6 +169,8 @@ const SearchSection = () => {
                             type: SEARCH_RESULTS,
                             payload: { search_results: response.data}
                         });
+                        console.log("SEARCH RESULTS");
+                        console.log(response.data);
                     }
                 }
                 else{
