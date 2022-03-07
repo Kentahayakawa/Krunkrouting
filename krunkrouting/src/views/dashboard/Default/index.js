@@ -29,13 +29,9 @@ const Dashboard = () => {
         return (
             <Grid container direction="column" spacing={gridSpacing}>
                 <Grid item xs={12}>
-                    <Grid container spacing={gridSpacing}
-                        <Grid item lg={6} md={12} sm={12} xs={12}>
-                            <Grid container spacing={gridSpacing}>
-                                <Grid item lg={12} md={12} sm={12} xs={12}>
-                                    <TotalCards isLoading={isLoading} />
-                                </Grid>
-                            </Grid>
+                    <Grid container spacing={gridSpacing}>
+                        <Grid item lg={12} md={12} sm={12} xs={12}>
+                            <TotalCards isLoading={isLoading} />
                         </Grid>
                     </Grid>
                 </Grid>
@@ -54,7 +50,7 @@ const Dashboard = () => {
     }
     return (
         <Grid container justifyContent="flex-end" direction="row" spacing={gridSpacing}>
-            <Grid item xs={12} lg={12}>
+            <Grid item xs={12} lg={4}>
                 <Grid container>
                     <Grid item xs={12}>
                         <SearchResultsCard isLoading={isLoading} />
