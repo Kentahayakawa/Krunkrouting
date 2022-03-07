@@ -70,6 +70,7 @@ class Users(db.Model):
         result['email'] = self.email
         result['group_id'] = self.group_id
         result['votes'] = [v.place_id for v in self.votes]
+        result['_group_invite_code'] = self.group.invite_code
         return result
 
 class Groups(db.Model):
