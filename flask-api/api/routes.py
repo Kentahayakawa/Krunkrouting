@@ -313,18 +313,20 @@ class NearbyPlaces(Resource):
             min_rating = args['min_rating'] if args['min_rating'] else 0
         )
 
+        # Cache places
         for place in places:
-            # Add to the cache
-            place_sql = Places(
-                place['id'],
-                place['name'],
-                place['address'],
-                place['lat'],
-                place['lng'],
-                place['price_level'],
-                place['rating']
-            )
-            place_sql.save()
+            if not Places.get_by_place_id(place['id']):
+                place_sql = Places(
+                    place['id'],
+                    place['name'],
+                    place['address'],
+                    place['lat'],
+                    place['lng'],
+                    place['price_level'],
+                    place['rating'],
+                    place['user_ratings_total']
+                )
+                place_sql.save()
         
         return [Places.get_by_place_id(place['id']).toJSON() for place in places], 200
 

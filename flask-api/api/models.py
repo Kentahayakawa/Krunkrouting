@@ -195,8 +195,9 @@ class Places(db.Model):
     lng = db.Column(db.Float())
     price_level = db.Column(db.Integer())
     rating = db.Column(db.Float())
+    user_ratings_total = db.Column(db.Integer())
 
-    def __init__(self, place_id, name, address, lat, lng, price_level, rating):
+    def __init__(self, place_id, name, address, lat, lng, price_level, rating, user_ratings_total):
         self.place_id = place_id
         self.name = name
         self.address = address
@@ -204,6 +205,7 @@ class Places(db.Model):
         self.lng = lng
         self.price_level = price_level
         self.rating = rating
+        self.user_ratings_total = user_ratings_total
 
     def save(self):
         db.session.add(self)
@@ -217,7 +219,8 @@ class Places(db.Model):
             'lat': self.lat,
             'lng': self.lng,
             'price_level': self.price_level,
-            'rating': self.rating
+            'rating': self.rating,
+            'user_ratings_total': self.user_ratings_total
         }
 
     @classmethod
