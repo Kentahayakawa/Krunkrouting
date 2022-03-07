@@ -1,7 +1,5 @@
 import googlemaps
-from datetime import datetime
-from typing import Tuple
-import requests, json
+import requests
 import pandas as pd
 
 # kenta key AIzaSyDTFzL6u9x1X2sI972pY__SA4x_tOPXXLw
