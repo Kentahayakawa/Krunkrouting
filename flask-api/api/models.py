@@ -38,14 +38,12 @@ class Users(db.Model):
     def set_address(self, new_address):
         self.address = new_address
         latlng = to_coordinates(self.address)
+        print(f'Setting address "{new_address}" --> to coords ({latlng[0]}, {latlng[1]})')
         self.start_lat = latlng[0]
         self.start_lng = latlng[1]
         
     def set_password(self, password):
         self.password = generate_password_hash(password)
-
-    def set_address(self, new_address):
-        self.address = new_address
         
     def check_password(self, password):
         return check_password_hash(self.password, password)
@@ -89,6 +87,7 @@ class Users(db.Model):
             'lat': self.start_lat,
             'lng': self.start_lng
         }
+        result['current_event_index'] = self.current_event
         return result
 
 class Groups(db.Model):
@@ -99,6 +98,7 @@ class Groups(db.Model):
     leader = db.relationship('Users', foreign_keys=[leader_id])
 
     allow_voting = db.Column(db.Boolean())
+    current_event = db.Column(db.Integer(), default=0)
 
     def __init__(self, leader_id):
         self.leader_id = leader_id
@@ -175,7 +175,8 @@ class Groups(db.Model):
         result['leader'] = self.leader.toJSON()
         result['members'] = [member.toJSON() for member in self.members]
         result['votes'] = self._tally_votes()
-        result['events'] = [event.toJSON() for event in self.events]
+        result['events'] = [event.toJSON() for event in self.events],
+        result['current_event'] = self.current_event
         return result
 
 class Votes(db.Model):
