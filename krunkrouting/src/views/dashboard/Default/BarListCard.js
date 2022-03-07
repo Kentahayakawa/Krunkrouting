@@ -206,7 +206,7 @@ const BarListCard = ({ isLoading }) => {
                                         n_votes:response2.data.group.votes[vote]['num_votes']
                                     })
                                 }
-                                tempbarlist.sort((a, b) => a.n_votes - b.n_votes)
+                                tempbarlist.sort((a, b) => b.n_votes - a.n_votes)
                                 setBarList(tempbarlist);
                             }
                         }).catch(function (error) {
