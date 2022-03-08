@@ -342,6 +342,8 @@ class MoveGroup(Resource):
             }, 200
 
         if current_user.group.current_event < len(current_user.group.events) - 1:
+            current_user.group.current_event += 1
+            current_user.group.save()
             return {
                 'success': True,
                 'group': current_user.group.toJSON()

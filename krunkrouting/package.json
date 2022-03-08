@@ -5,6 +5,8 @@
   "dependencies": {
     "@emotion/react": "^11.4.0",
     "@emotion/styled": "^11.3.0",
+    "@google/markerclustererplus": "^5.0.3",
+    "@googlemaps/js-api-loader": "^1.13.8",
     "@material-ui/core": "^5.0.0-beta.0",
     "@material-ui/data-grid": "^4.0.0-alpha.33",
     "@material-ui/icons": "^5.0.0-beta.0",
@@ -33,7 +35,13 @@
     "react-scripts": "^4.0.3",
     "redux": "^4.0.5",
     "redux-persist": "^6.0.0",
-    "yup": "^0.32.9"
+    "yup": "^0.32.9",
+    "@react-google-maps/api": "^2.0.2",
+    "@types/googlemaps": "3.30.16",
+    "@types/markerclustererplus": "2.1.33",
+    "@types/react": "16.8.4",
+    "react-google-autocomplete": "1.2.6",
+    "react-google-maps": "9.4.5"
   },
   "scripts": {
     "start": "react-scripts start",
