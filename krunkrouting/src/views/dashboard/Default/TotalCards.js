@@ -337,7 +337,6 @@ const TotalCards = ({ isLoading }) => {
 
                 {/* TotalIncomeLightCard */}
                 <Grid item lg={4} xs={12}>     
-                    <MainCard border={false} className={classes.card3} contentClass={classes.content2}>
                         <ButtonBase onClick={handleRemove}>
                         <MainCard className={classes.card2} contentClass={classes.content2}>
                             <List className={classes.padding}>
@@ -352,8 +351,8 @@ const TotalCards = ({ isLoading }) => {
                                     />
                                 </ListItem>
                             </List>
-                        </ButtonBase>
-                    </MainCard>
+                        </MainCard>
+                    </ButtonBase>
                 </Grid>
             </Grid>
             )}
